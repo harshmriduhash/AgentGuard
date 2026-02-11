@@ -40,7 +40,7 @@ const SignupPage = () => {
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2">
             <Shield className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">AgentGuard<span className="text-primary">.ai</span></span>
+            <span className="text-2xl font-bold">Agent-Guard<span className="text-primary">.ai</span></span>
           </Link>
           <p className="mt-2 text-sm text-muted-foreground">Create your account</p>
         </div>
