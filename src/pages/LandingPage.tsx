@@ -8,7 +8,7 @@ const Navbar = () => (
     <div className="container mx-auto flex h-16 items-center justify-between px-6">
       <Link to="/" className="flex items-center gap-2">
         <Shield className="h-6 w-6 text-primary" />
-        <span className="text-lg font-bold tracking-tight">AgentGuard<span className="text-primary">.ai</span></span>
+        <span className="text-lg font-bold tracking-tight">Agent-Guard<span className="text-primary">.ai</span></span>
       </Link>
       <div className="hidden items-center gap-8 md:flex">
         <a href="#how-it-works" className="text-sm text-muted-foreground transition-colors hover:text-foreground">How it works</a>
