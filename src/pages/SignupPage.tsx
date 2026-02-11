@@ -13,8 +13,7 @@ const SignupPage = () => {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const { toast } = useToast();ß
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
