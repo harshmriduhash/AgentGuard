@@ -13,6 +13,7 @@ import PRsPage from "./pages/dashboard/PRsPage";
 import RulesPage from "./pages/dashboard/RulesPage";
 import AgentsPage from "./pages/dashboard/AgentsPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
+import GitHubSetupPage from "./pages/dashboard/GitHubSetupPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="rules" element={<RulesPage />} />
               <Route path="agents" element={<AgentsPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="github-setup" element={<GitHubSetupPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
