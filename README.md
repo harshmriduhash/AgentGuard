@@ -1,73 +1,143 @@
-# Welcome to your Lovable project
+# AgentGuard.ai
 
-## Project info
+> **Control what AI agents ship.** Automated security review for AI-generated pull requests.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## What is AgentGuard?
 
-## How can I edit this code?
+AgentGuard.ai is a SaaS platform that automatically analyzes AI-generated pull requests for security vulnerabilities, breaking changes, compliance gaps, and policy violations — before they reach production.
 
-There are several ways of editing your application.
+As AI coding agents (Copilot, Cursor, Devin, etc.) generate code at machine speed, human reviewers can't keep up. AgentGuard sits between the AI agent and your main branch, providing an automated safety layer.
 
-**Use Lovable**
+## Who is this for?
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Engineering teams** using AI coding assistants who want guardrails on what gets merged
+- **Security-conscious organizations** that need automated compliance checks on AI-generated code
+- **CTOs and tech leads** who want visibility into what AI agents are shipping across their repos
 
-Changes made via Lovable will be committed automatically to this repo.
+## How it works
 
-**Use your preferred IDE**
+1. **AI opens a PR** — An AI agent pushes code and opens a pull request on your repository
+2. **AgentGuard analyzes** — Our engine scans the diff for security risks, breaking changes, pattern violations, and compliance issues using AI-powered analysis
+3. **Human decides** — You get a detailed risk report with actionable insights. Approve, request changes, or block — you stay in control
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **AI-Powered PR Analysis** — Every PR gets a risk score (0–100), summary, and category breakdown (Security, Breaking Changes, Performance, Compliance)
+- **Custom Rules Engine** — Define file path restrictions, directory restrictions, sensitive pattern detection, and approval-required paths per repository
+- **Agent Trust Scores** — Track AI agents over time with trust scores based on historical violations and approvals
+- **GitHub Action Integration** — Drop-in GitHub Action workflow that triggers analysis on every PR
+- **Usage-Based Billing** — Free tier (10 checks/mo), Starter ($29/mo, 100 checks), Pro ($99/mo, unlimited)
 
-Follow these steps:
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS |
+| **UI Components** | shadcn/ui, Radix UI, Framer Motion |
+| **Backend** | Supabase (Postgres, Auth, Edge Functions) |
+| **AI Engine** | Lovable AI Gateway (Gemini 2.5 Flash) |
+| **Auth** | Supabase Auth (email/password) |
+| **Payments** | Stripe (planned) |
+| **CI/CD** | GitHub Actions integration |
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/              # shadcn/ui primitives
+│   ├── DashboardLayout  # Sidebar + main content layout
+│   └── ProtectedRoute   # Auth guard for dashboard routes
+├── contexts/            # React context providers (Auth)
+├── pages/
+│   ├── LandingPage      # Marketing homepage
+│   ├── LoginPage        # Email/password login
+│   ├── SignupPage       # Registration with display name
+│   └── dashboard/
+│       ├── PRsPage      # PR analysis list + detail view
+│       ├── RulesPage    # CRUD for security rules
+│       ├── AgentsPage   # AI agent monitoring
+│       ├── GitHubSetupPage # Integration setup guide
+│       └── SettingsPage # Profile, repos, billing
+├── integrations/
+│   └── supabase/        # Auto-generated client + types
+└── hooks/               # Custom React hooks
+
+supabase/
+├── functions/
+│   └── analyze-pr/      # Edge function: AI-powered PR analysis
+├── migrations/          # Database schema migrations
+└── config.toml          # Supabase project config
+```
+
+## Database Schema
+
+- **profiles** — User display name and organization
+- **user_roles** — Role-based access (admin, user)
+- **repositories** — Connected GitHub repos
+- **agents** — AI agent identifiers with trust scores (0–100)
+- **rules** — Per-repo security rules (file paths, patterns, restrictions)
+- **pr_analyses** — PR analysis results with risk scores and breakdowns
+- **rule_violations** — Violations detected per PR per rule
+- **subscriptions** — Billing plan and usage tracking
+
+## Getting Started
+
+### Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repo
 git clone <YOUR_GIT_URL>
+cd agentguard
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Connect to Your Repos
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Sign up at the app
+2. Go to **Settings → Connected Repositories** and add your GitHub repo
+3. Go to **GitHub** tab and follow the setup guide to add the GitHub Action
+4. Open a PR and watch AgentGuard analyze it automatically
 
-**Use GitHub Codespaces**
+## API
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### POST /functions/v1/analyze-pr
 
-## What technologies are used for this project?
+Analyzes a PR diff and returns a risk assessment.
 
-This project is built with:
+**Request body:**
+```json
+{
+  "repository_id": "uuid",
+  "pr_number": 123,
+  "title": "Add new feature",
+  "diff": "diff content...",
+  "agent_name": "copilot" 
+}
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Response:**
+```json
+{
+  "id": "uuid",
+  "summary": "This PR adds...",
+  "risk_score": 45,
+  "risk_breakdown": {
+    "security": 60,
+    "breaking_changes": 30,
+    "performance": 40,
+    "compliance": 50
+  },
+  "status": "needs_review",
+  "violations": []
+}
+```
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT

@@ -49,7 +49,7 @@ const LoginPage = () => {
           </Button>
         </form>
         <p className="text-center text-sm text-muted-foreground">
-          Don't have an account??{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
         </p>
       </div>

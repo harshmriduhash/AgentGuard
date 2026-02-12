@@ -13,7 +13,7 @@ const SignupPage = () => {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();ß
+  const { toast } = useToast();
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -62,7 +62,7 @@ const SignupPage = () => {
           </Button>
         </form>
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account??{" "}
+          Already have an account?{" "}
           <Link to="/login" className="text-primary hover:underline">Sign in</Link>
         </p>
       </div>
