@@ -1,0 +1,10 @@
+- [ ] Create a concrete list of 5–10 initial design-partner teams to onboard
+- [ ] Schedule 1:1 onboarding calls and live walk-through for first users
+- [ ] Prepare short documentation for installing the GitHub Action and connecting repos
+- [ ] Prepare a short FAQ for engineering teams (what AgentGuard checks, what it doesn’t)
+- [ ] Define success metrics for first month (e.g., number of analyzed PRs, caught violations)
+- [ ] Set up a feedback channel (Slack, email, or issue tracker) for early users
+- [ ] Run a full “day-in-the-life” scenario internally before inviting users
+- [ ] Assign an on-call person for triaging production issues during launch window
+- [ ] Review and update LAUNCH_CHECKLIST and MVP_LAUNCH_CHECKLIST before going live
+

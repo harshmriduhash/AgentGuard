@@ -1,0 +1,11 @@
+- [ ] Supabase migrations are all applied in the production project
+- [ ] Database indexes created (repositories.user_id, rules.user_id, rules.repository_id, pr_analyses.user_id+created_at, pr_analyses.repository_id, rule_violations.pr_analysis_id, subscriptions.user_id)
+- [ ] Edge function `analyze-pr` deployed and tested with valid JWTs
+- [ ] Repository ownership check confirmed: cannot analyze PRs for someone else’s repo
+- [ ] Agent statistics and subscription usage updates verified under concurrent PRs
+- [ ] CORS restricted via ALLOWED_ORIGIN to the production frontend domain
+- [ ] Error responses from `analyze-pr` are generic (no internal messages leaked)
+- [ ] Basic per-user rate limiting behaviour confirmed (too many PRs per minute returns 429)
+- [ ] Frontend error states and loading indicators verified on dashboard pages
+- [ ] Logging and monitoring set up (Supabase logs, GitHub Actions logs, error notifications)
+

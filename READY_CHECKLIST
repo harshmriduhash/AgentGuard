@@ -1,0 +1,9 @@
+- [ ] Product solves a clear problem for a specific user (AI-augmented engineers / teams)
+- [ ] Core features are stable: PR analysis, rules engine, agent tracking, usage limits
+- [ ] Security basics covered: RLS enabled, repository ownership enforced, secrets safe
+- [ ] Performance basics covered: key indexes in place, no obvious blocking calls per request
+- [ ] Observability basics covered: can inspect Supabase logs and GitHub Actions logs quickly
+- [ ] Onboarding flow documented for new workspaces/organizations
+- [ ] Rollback plan defined if something goes wrong during launch
+- [ ] MVP_LAUNCH_CHECKLIST and PRODUCTION_CHECKLIST fully reviewed
+

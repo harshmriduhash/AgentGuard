@@ -1,0 +1,11 @@
+- [ ] Clarify target users for first launch (team size, repos, AI usage patterns)
+- [ ] Confirm Supabase project is created and migrations are applied
+- [ ] Configure Supabase Auth (email/password) and verify sign-up and login flows
+- [ ] Set Supabase Edge Function environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, LOVABLE_API_KEY)
+- [ ] Set ALLOWED_ORIGIN to your production frontend domain in Supabase
+- [ ] Deploy frontend (Vercel/Netlify/etc.) pointing to the correct VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
+- [ ] Test full flow: sign up → connect repo → add rules → run GitHub Action → see PR analysis
+- [ ] Verify RLS policies work by testing with a second test account
+- [ ] Sanity-check AI outputs for a few PRs and tune rules as needed
+- [ ] Review pricing copy and plan limits (free/starter/pro) for clarity
+

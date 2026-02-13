@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, FileText, BookOpen, Bot, Settings, LogOut, Menu, X, Github } from "lucide-react";
+import { Shield, FileText, BookOpen, Bot, Settings, LogOut, Menu, X, Github, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { to: "/dashboard", label: "PRs", icon: FileText, end: true },
   { to: "/dashboard/rules", label: "Rules", icon: BookOpen },
+  { to: "/dashboard/assistant", label: "Assistant", icon: MessageCircle },
   { to: "/dashboard/agents", label: "Agents", icon: Bot },
   { to: "/dashboard/github-setup", label: "GitHub", icon: Github },
   { to: "/dashboard/settings", label: "Settings", icon: Settings },

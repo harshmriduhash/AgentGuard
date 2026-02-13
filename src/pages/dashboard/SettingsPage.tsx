@@ -22,13 +22,22 @@ const SettingsPage = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("id", user.id).single().then(({ data }) => {
+    supabase.from("profiles").select("*").eq("id", user.id).single().then(({ data, error }) => {
+      if (error) {
+        toast({ title: "Failed to load profile", description: error.message, variant: "destructive" });
+      }
       if (data) setProfile({ display_name: data.display_name || "", organization: data.organization || "" });
     });
-    supabase.from("repositories").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data }) => {
+    supabase.from("repositories").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data, error }) => {
+      if (error) {
+        toast({ title: "Failed to load repositories", description: error.message, variant: "destructive" });
+      }
       if (data) setRepos(data);
     });
-    supabase.from("subscriptions").select("*").eq("user_id", user.id).single().then(({ data }) => {
+    supabase.from("subscriptions").select("*").eq("user_id", user.id).single().then(({ data, error }) => {
+      if (error) {
+        toast({ title: "Failed to load subscription", description: error.message, variant: "destructive" });
+      }
       if (data) setSubscription(data);
     });
   }, [user]);
@@ -62,8 +71,12 @@ const SettingsPage = () => {
   };
 
   const deleteRepo = async (id: string) => {
-    await supabase.from("repositories").delete().eq("id", id);
-    setRepos(repos.filter((r) => r.id !== id));
+    const { error } = await supabase.from("repositories").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      setRepos(repos.filter((r) => r.id !== id));
+    }
   };
 
   const planLabels: Record<string, string> = { free: "Free", starter: "Starter — $29/mo", pro: "Pro — $99/mo" };

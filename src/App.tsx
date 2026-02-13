@@ -14,6 +14,7 @@ import RulesPage from "./pages/dashboard/RulesPage";
 import AgentsPage from "./pages/dashboard/AgentsPage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import GitHubSetupPage from "./pages/dashboard/GitHubSetupPage";
+import AssistantPage from "./pages/dashboard/AssistantPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route index element={<PRsPage />} />
               <Route path="rules" element={<RulesPage />} />
               <Route path="agents" element={<AgentsPage />} />
+              <Route path="assistant" element={<AssistantPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="github-setup" element={<GitHubSetupPage />} />
             </Route>

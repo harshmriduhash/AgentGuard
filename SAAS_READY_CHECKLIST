@@ -1,0 +1,11 @@
+- [ ] Clear value proposition and messaging on the landing page
+- [ ] Pricing and plan limits aligned with expected usage and costs
+- [ ] Authentication flow robust (signup, login, password reset tested)
+- [ ] Multi-tenant data isolation validated via RLS and repository ownership checks
+- [ ] Graceful handling of AI gateway failures (fallback messaging and retry strategy)
+- [ ] Billing integration (Stripe or equivalent) planned or implemented for paid tiers
+- [ ] Data export and account deletion paths defined for users
+- [ ] Basic uptime and incident response process defined
+- [ ] Legal basics considered (ToS, Privacy Policy appropriate for your region)
+- [ ] LAUNCH_CHECKLIST, PRODUCTION_CHECKLIST, EXECUTION_CHECKLIST, and READY_CHECKLIST reviewed
+

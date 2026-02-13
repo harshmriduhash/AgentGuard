@@ -1,7 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabasePublishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
+const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
+const allowedOrigin = Deno.env.get("ALLOWED_ORIGIN") || "*";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": allowedOrigin,
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
@@ -28,12 +34,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
-
     // Auth with user token
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!, {
+    const userClient = createClient(supabaseUrl, supabasePublishableKey, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: { user }, error: authError } = await userClient.auth.getUser();
@@ -54,7 +56,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    const adminClient = createClient(supabaseUrl, supabaseKey);
+    const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+    // Ensure repository belongs to the authenticated user
+    const { data: repo, error: repoError } = await adminClient
+      .from("repositories")
+      .select("id, user_id, full_name")
+      .eq("id", repository_id)
+      .single();
+
+    if (repoError || !repo || repo.user_id !== user.id) {
+      return new Response(JSON.stringify({ error: "Repository not found or access denied" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Basic per-user rate limiting: max 20 analyses per minute
+    const { count: recentCount } = await adminClient
+      .from("pr_analyses")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", new Date(Date.now() - 60_000).toISOString());
+
+    if ((recentCount ?? 0) >= 20) {
+      return new Response(JSON.stringify({ error: "Too many requests. Please wait a moment and try again." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Check usage limits
     const { data: subscription } = await adminClient
@@ -139,10 +169,10 @@ Return ONLY valid JSON, no markdown fences.`;
 
       if (existingAgent) {
         agent_id = existingAgent.id;
-        await adminClient.from("agents").update({
-          total_prs: (await adminClient.from("agents").select("total_prs").eq("id", agent_id).single()).data?.total_prs + 1 || 1,
-          violations_count: (await adminClient.from("agents").select("violations_count").eq("id", agent_id).single()).data?.violations_count + (analysis.violations?.length || 0),
-        }).eq("id", agent_id);
+        await adminClient.rpc("increment_agent_stats", {
+          p_agent_id: agent_id,
+          p_violations_delta: analysis.violations?.length || 0,
+        });
       } else {
         const { data: newAgent } = await adminClient
           .from("agents")
@@ -195,11 +225,11 @@ Return ONLY valid JSON, no markdown fences.`;
       }
     }
 
-    // Increment usage
+    // Increment usage (avoid stale values in application code)
     if (subscription) {
-      await adminClient.from("subscriptions").update({
-        pr_checks_used: subscription.pr_checks_used + 1,
-      }).eq("id", subscription.id);
+      await adminClient.rpc("increment_subscription_usage", {
+        p_subscription_id: subscription.id,
+      });
     }
 
     return new Response(JSON.stringify({
@@ -213,7 +243,8 @@ Return ONLY valid JSON, no markdown fences.`;
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    console.error("analyze-pr error", err);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

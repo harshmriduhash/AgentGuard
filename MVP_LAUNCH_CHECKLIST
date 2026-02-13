@@ -1,0 +1,11 @@
+- [ ] Core user journey works end-to-end for a non-technical tester
+      (sign up → connect repo → add rule → open PR → see analysis)
+- [ ] Edge function can handle typical PR diff sizes (up to configured truncation limit)
+- [ ] Usage limits and plan tiers enforced correctly via `subscriptions` table
+- [ ] At least one AI agent (e.g., GitHub Copilot) successfully tracked in `agents`
+- [ ] UI tested on latest Chrome and one additional browser
+- [ ] Empty states, loading states, and error toasts verified on main dashboard screens
+- [ ] .env and secrets double-checked not to be committed to git
+- [ ] README updated with clear problem statement, solution, and architecture overview
+- [ ] PRODUCTION_CHECKLIST items reviewed and major risks accepted or fixed
+

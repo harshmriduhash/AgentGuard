@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface Agent {
   id: string;
@@ -24,17 +25,30 @@ const trustColor = (score: number) => {
 
 const AgentsPage = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
+    setLoading(true);
     supabase
       .from("agents")
       .select("*")
       .eq("user_id", user.id)
       .order("trust_score", { ascending: false })
-      .then(({ data }) => { if (data) setAgents(data); });
-  }, [user]);
+      .then(({ data, error }) => {
+        if (error) {
+          toast({
+            title: "Failed to load agents",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+        if (data) setAgents(data);
+      })
+      .finally(() => setLoading(false));
+  }, [user, toast]);
 
   return (
     <div className="space-y-6">
@@ -43,7 +57,11 @@ const AgentsPage = () => {
         <p className="text-sm text-muted-foreground">Track AI agents & their trust scores</p>
       </div>
 
-      {agents.length === 0 ? (
+      {loading ? (
+        <Card className="py-12 text-center">
+          <p className="text-muted-foreground">Loading agents...</p>
+        </Card>
+      ) : agents.length === 0 ? (
         <Card className="py-12 text-center">
           <Bot className="mx-auto h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-muted-foreground">No agents detected yet. Agents are auto-discovered when PRs are analyzed.</p>

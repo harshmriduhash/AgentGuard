@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface PrAnalysis {
   id: string;
@@ -37,23 +38,46 @@ const statusIcon = (status: string) => {
 
 const PRsPage = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [analyses, setAnalyses] = useState<PrAnalysis[]>([]);
   const [selected, setSelected] = useState<PrAnalysis | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [riskFilter, setRiskFilter] = useState<string>("all");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user) return;
     const fetchAnalyses = async () => {
-      const { data } = await supabase
-        .from("pr_analyses")
-        .select("*, repositories(full_name)")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      if (data) setAnalyses(data as unknown as PrAnalysis[]);
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("pr_analyses")
+          .select("*, repositories(full_name)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          toast({
+            title: "Failed to load PR analyses",
+            description: error.message,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (data) setAnalyses(data as unknown as PrAnalysis[]);
+      } catch (err: any) {
+        toast({
+          title: "Unexpected error",
+          description: err?.message ?? "Something went wrong while loading PR analyses.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
     fetchAnalyses();
-  }, [user]);
+  }, [user, toast]);
 
   const filtered = analyses.filter((a) => {
     if (statusFilter !== "all" && a.status !== statusFilter) return false;
@@ -148,7 +172,11 @@ const PRsPage = () => {
           </SelectContent>
         </Select>
       </div>
-      {filtered.length === 0 ? (
+      {loading ? (
+        <Card className="py-12 text-center">
+          <p className="text-muted-foreground">Loading PR analyses...</p>
+        </Card>
+      ) : filtered.length === 0 ? (
         <Card className="py-12 text-center">
           <FileText className="mx-auto h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-muted-foreground">No PR analyses yet. Connect a repo and run your first analysis.</p>

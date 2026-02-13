@@ -38,20 +38,29 @@ const RulesPage = () => {
   const [repos, setRepos] = useState<Repository[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ repository_id: "", rule_type: "file_path_restriction", pattern: "", description: "" });
+  const [loading, setLoading] = useState(false);
 
   const fetchRules = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setLoading(true);
+    const { data, error } = await supabase
       .from("rules")
       .select("*, repositories(full_name)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Failed to load rules", description: error.message, variant: "destructive" });
+    }
     if (data) setRules(data as unknown as Rule[]);
+    setLoading(false);
   };
 
   const fetchRepos = async () => {
     if (!user) return;
-    const { data } = await supabase.from("repositories").select("id, full_name").eq("user_id", user.id);
+    const { data, error } = await supabase.from("repositories").select("id, full_name").eq("user_id", user.id);
+    if (error) {
+      toast({ title: "Failed to load repositories", description: error.message, variant: "destructive" });
+    }
     if (data) setRepos(data as Repository[]);
   };
 
@@ -76,13 +85,21 @@ const RulesPage = () => {
   };
 
   const toggleRule = async (rule: Rule) => {
-    await supabase.from("rules").update({ is_active: !rule.is_active }).eq("id", rule.id);
-    fetchRules();
+    const { error } = await supabase.from("rules").update({ is_active: !rule.is_active }).eq("id", rule.id);
+    if (error) {
+      toast({ title: "Error updating rule", description: error.message, variant: "destructive" });
+    } else {
+      fetchRules();
+    }
   };
 
   const deleteRule = async (id: string) => {
-    await supabase.from("rules").delete().eq("id", id);
-    fetchRules();
+    const { error } = await supabase.from("rules").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error deleting rule", description: error.message, variant: "destructive" });
+    } else {
+      fetchRules();
+    }
   };
 
   return (
@@ -131,7 +148,11 @@ const RulesPage = () => {
         </Dialog>
       </div>
 
-      {rules.length === 0 ? (
+      {loading ? (
+        <Card className="py-12 text-center">
+          <p className="text-muted-foreground">Loading rules...</p>
+        </Card>
+      ) : rules.length === 0 ? (
         <Card className="py-12 text-center">
           <BookOpen className="mx-auto h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-muted-foreground">No rules yet. Add a repository first, then create rules.</p>
