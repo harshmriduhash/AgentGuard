@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, Mic, MicOff, Volume2, Zap } from "lucide-react";
 import { PageTransition } from "@/components/ui/page-transition";
-import { AIThinking, AIThinkingInline } from "@/components/ui/ai-thinking";
+import { AIThinkingInline } from "@/components/ui/ai-thinking";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type Role = "user" | "assistant";
 interface ChatMessage { role: Role; content: string; }
