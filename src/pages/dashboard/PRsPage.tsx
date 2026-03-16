@@ -52,16 +52,14 @@ const PRsPage = () => {
     const fetchAnalyses = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from("pr_analyses")
-          .select("*, repositories(full_name)")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
-        if (error) {
-          toast({ title: "Failed to load PR analyses", description: error.message, variant: "destructive" });
-          return;
-        }
-        if (data) setAnalyses(data as unknown as PrAnalysis[]);
+        const response = await fetch("/api/prs", {
+          headers: {
+            "x-user-id": user.id,
+          }
+        });
+        if (!response.ok) throw new Error("Failed to fetch PRs");
+        const data = await response.json();
+        setAnalyses(data);
       } catch (err: any) {
         toast({ title: "Unexpected error", description: err?.message ?? "Something went wrong.", variant: "destructive" });
       } finally {
@@ -116,36 +114,7 @@ const PRsPage = () => {
               </Card>
             </motion.div>
           )}
-          {Object.keys(breakdown).length > 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-              <Card className="border-white/5 bg-white/[0.02] backdrop-blur-3xl">
-                <CardHeader><CardTitle className="text-lg font-black font-display text-white">Risk Analysis Breakdown</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {Object.entries(breakdown).map(([category, score]) => (
-                      <div key={category} className="group">
-                        <div className="flex justify-between text-[11px] mb-3">
-                          <span className="capitalize font-bold tracking-widest text-white/40 group-hover:text-white/80 transition-colors">{category.replace("_", " ")}</span>
-                          <span className="font-mono text-white/60">{score as number}%</span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${score as number}%` }}
-                            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-                            className={cn(
-                              "h-full rounded-full transition-all duration-1000",
-                              (score as number) > 66 ? "bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)]" : "bg-white/40"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+          {/* Risk Analysis Breakdown temporarily disabled for migration */}
         </div>
       </PageTransition>
     );
@@ -213,7 +182,7 @@ const PRsPage = () => {
                       className="cursor-pointer border-white/5 hover:bg-white/[0.03] transition-all duration-300 group"
                       onClick={() => setSelected(a)}
                     >
-                      <TableCell className="font-mono text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{a.repositories?.full_name ?? "—"}</TableCell>
+                      <TableCell className="font-mono text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{a.repo_name ?? "—"}</TableCell>
                       <TableCell className="font-mono text-[10px] text-white/80 font-bold tracking-tight">#{a.pr_number}</TableCell>
                       <TableCell className="max-w-xs truncate text-sm text-white/90 font-medium">{a.title}</TableCell>
                       <TableCell><Badge className={cn(risk.color, "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border-0")}>{risk.label}</Badge></TableCell>
