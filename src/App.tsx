@@ -21,23 +21,91 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-if (!CLERK_PUBLISHABLE_KEY) {
-  throw new Error("Missing Clerk Publishable Key");
-}
+const ConfigError = () => (
+  <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
+    <div className="max-w-md w-full space-y-8 p-10 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-3xl shadow-2xl">
+      <div className="space-y-4">
+        <h1 className="text-2xl font-black font-display text-white tracking-tight uppercase">Config Incomplete</h1>
+        <p className="text-sm text-white/40 leading-relaxed">
+          The <code className="text-white/60 bg-white/5 px-1.5 py-0.5 rounded">VITE_CLERK_PUBLISHABLE_KEY</code> is missing or set to the placeholder in your <code className="text-white/60">.env</code> file.
+        </p>
+      </div>
+      <div className="pt-4">
+        <a 
+          href="https://dashboard.clerk.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-8 text-xs font-black uppercase tracking-widest text-black transition-all hover:bg-white/90 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+        >
+          Get Keys from Clerk
+        </a>
+      </div>
+      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/20 pt-4">
+        Restart your dev server after updating .env
+      </p>
+    </div>
+  </div>
+);
 
-const App = () => (
-  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+const App = () => {
+  const isConfigured = !!CLERK_PUBLISHABLE_KEY && !CLERK_PUBLISHABLE_KEY.includes("...");
+
+  return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes - No Clerk required */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route path="*" element={<NotFound />} />
+
+            {/* Auth & Protected Routes - Require valid configuration */}
+            <Route
+              path="/login"
+              element={
+                isConfigured ? (
+                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
+                    <AuthProvider>
+                      <LoginPage />
+                    </AuthProvider>
+                  </ClerkProvider>
+                ) : (
+                  <ConfigError />
+                )
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                isConfigured ? (
+                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
+                    <AuthProvider>
+                      <SignupPage />
+                    </AuthProvider>
+                  </ClerkProvider>
+                ) : (
+                  <ConfigError />
+                )
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                isConfigured ? (
+                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
+                    <AuthProvider>
+                      <ProtectedRoute>
+                        <DashboardLayout />
+                      </ProtectedRoute>
+                    </AuthProvider>
+                  </ClerkProvider>
+                ) : (
+                  <ConfigError />
+                )
+              }
+            >
               <Route index element={<PRsPage />} />
               <Route path="rules" element={<RulesPage />} />
               <Route path="agents" element={<AgentsPage />} />
@@ -45,13 +113,11 @@ const App = () => (
               <Route path="settings" element={<SettingsPage />} />
               <Route path="github-setup" element={<GitHubSetupPage />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-</ClerkProvider>
-);
+    </QueryClientProvider>
+  );
+};
 
 export default App;
