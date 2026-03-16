@@ -23,9 +23,13 @@ export default async function handler(req: any, res: any) {
       target: profiles.id,
       set: { displayName: display_name, organization }
     }).returning();
-    return res.status(200).json(updated);
+    return res.status(200).json({
+      plan: data.planTier,
+      pr_checks_used: data.prChecksUsed,
+      pr_checks_limit: data.prChecksLimit
+    });
   }
 
   return res.status(405).end();
 }
-创新: Profile persistence with Drizzle onConflict support.
+```
