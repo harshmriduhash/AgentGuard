@@ -89,34 +89,37 @@ const RulesPage = () => {
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2 glow-primary"><Plus className="h-4 w-4" /> Add Rule</Button>
+              <Button size="sm" className="gap-2 bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.2)] font-bold tracking-tight">
+                <Plus className="h-4 w-4" /> Add Protocol Rule
+              </Button>
             </DialogTrigger>
-            <DialogContent className="border-border/50 bg-card">
-              <DialogHeader><DialogTitle className="font-display">Create Rule</DialogTitle></DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">Repository</Label>
+            <DialogContent className="border-white/10 bg-black/90 backdrop-blur-3xl shadow-2xl overflow-hidden sm:max-w-[425px]">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+              <DialogHeader><DialogTitle className="font-black font-display text-2xl tracking-tight text-white">Create New Rule</DialogTitle></DialogHeader>
+              <div className="space-y-6 pt-6 relative">
+                <div className="space-y-2.5">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Repository Registry</Label>
                   <Select value={form.repository_id} onValueChange={(v) => setForm({ ...form, repository_id: v })}>
-                    <SelectTrigger className="bg-background/50 border-border/50"><SelectValue placeholder="Select repo" /></SelectTrigger>
-                    <SelectContent>{repos.map((r) => <SelectItem key={r.id} value={r.id}>{r.full_name}</SelectItem>)}</SelectContent>
+                    <SelectTrigger className="bg-white/[0.03] border-white/10 text-white/80 h-11 focus:ring-white/20 transition-all"><SelectValue placeholder="Select target repository" /></SelectTrigger>
+                    <SelectContent className="bg-black border-white/10 text-white/80">{repos.map((r) => <SelectItem key={r.id} value={r.id} className="hover:bg-white/[0.05]">{r.full_name}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">Rule Type</Label>
+                <div className="space-y-2.5">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Rule Classification</Label>
                   <Select value={form.rule_type} onValueChange={(v) => setForm({ ...form, rule_type: v })}>
-                    <SelectTrigger className="bg-background/50 border-border/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>{Object.entries(ruleTypeLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
+                    <SelectTrigger className="bg-white/[0.03] border-white/10 text-white/80 h-11 focus:ring-white/20 transition-all"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-black border-white/10 text-white/80">{Object.entries(ruleTypeLabels).map(([k, v]) => <SelectItem key={k} value={k} className="hover:bg-white/[0.05]">{v}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">Pattern</Label>
-                  <Input value={form.pattern} onChange={(e) => setForm({ ...form, pattern: e.target.value })} placeholder="e.g. **/*.env" className="bg-background/50 border-border/50" />
+                <div className="space-y-2.5">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Pattern Protocol</Label>
+                  <Input value={form.pattern} onChange={(e) => setForm({ ...form, pattern: e.target.value })} placeholder="e.g. **/*.env" className="bg-white/[0.03] border-white/10 text-white/80 h-11 focus:ring-white/20 transition-all" />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">Description</Label>
-                  <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What this rule checks for" className="bg-background/50 border-border/50" />
+                <div className="space-y-2.5">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Description Intent</Label>
+                  <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="State the objective of this rule" className="bg-white/[0.03] border-white/10 text-white/80 h-11 focus:ring-white/20 transition-all" />
                 </div>
-                <Button onClick={handleCreate} className="w-full glow-primary">Create Rule</Button>
+                <Button onClick={handleCreate} className="w-full bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest h-11 mt-4 shadow-[0_0_30px_rgba(255,255,255,0.1)]">Register Rule</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -125,29 +128,35 @@ const RulesPage = () => {
         {loading ? (
           <ShimmerTable rows={4} />
         ) : rules.length === 0 ? (
-          <EmptyState icon={BookOpen} title="No rules yet" description="Add a repository first, then create rules to enforce on AI-generated PRs." />
+          <EmptyState icon={BookOpen} title="Security Protocol Empty" description="Initialize your codebase by establishing rules to monitor AI-driven pull requests." />
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg border border-border/50 overflow-hidden">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-3xl overflow-hidden shadow-2xl">
             <Table>
               <TableHeader>
-                <TableRow className="border-border/50 hover:bg-transparent">
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Repository</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Type</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Pattern</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Active</TableHead>
-                  <TableHead></TableHead>
+                <TableRow className="border-white/5 hover:bg-transparent bg-white/[0.02]">
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Registry</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Classification</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Pattern</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Status</TableHead>
+                  <TableHead className="h-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rules.map((rule, i) => (
-                  <motion.tr key={rule.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }} className="border-border/30 hover:bg-accent/50 transition-colors">
-                    <TableCell className="font-mono text-xs text-muted-foreground">{rule.repositories?.full_name ?? "—"}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-xs border-border/50">{ruleTypeLabels[rule.rule_type] ?? rule.rule_type}</Badge></TableCell>
-                    <TableCell className="font-mono text-xs">{rule.pattern}</TableCell>
-                    <TableCell><Switch checked={rule.is_active} onCheckedChange={() => toggleRule(rule)} /></TableCell>
+                  <motion.tr key={rule.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="cursor-default border-white/5 hover:bg-white/[0.03] transition-all duration-300 group">
+                    <TableCell className="font-mono text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{rule.repositories?.full_name ?? "—"}</TableCell>
+                    <TableCell><Badge className="bg-white/5 text-white/60 border-white/10 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5">{ruleTypeLabels[rule.rule_type] ?? rule.rule_type}</Badge></TableCell>
+                    <TableCell className="font-mono text-sm text-white/80 font-bold tracking-tight">{rule.pattern}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => deleteRule(rule.id)} className="hover:bg-destructive/10 hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
+                      <Switch 
+                        checked={rule.is_active} 
+                        onCheckedChange={() => toggleRule(rule)} 
+                        className="data-[state=checked]:bg-white data-[state=unchecked]:bg-white/10 scale-90"
+                      />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" onClick={() => deleteRule(rule.id)} className="h-8 w-8 hover:bg-white/10 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-full">
+                        <Trash2 className="h-4 w-4 opacity-50" />
                       </Button>
                     </TableCell>
                   </motion.tr>

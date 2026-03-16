@@ -52,9 +52,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        success: "hsl(var(--success))",
-        warning: "hsl(var(--warning))",
-        info: "hsl(var(--info))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -101,16 +98,24 @@ export default {
           "100%": { transform: "translateX(0)" },
         },
         "glow-pulse": {
-          "0%, 100%": { boxShadow: "0 0 20px -5px hsl(355 85% 55% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px -5px hsl(355 85% 55% / 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px -5px hsl(0 0% 100% / 0.15)" },
+          "50%": { boxShadow: "0 0 40px -5px hsl(0 0% 100% / 0.3)" },
         },
         "border-glow": {
-          "0%, 100%": { borderColor: "hsl(355 85% 55% / 0.2)" },
-          "50%": { borderColor: "hsl(355 85% 55% / 0.6)" },
+          "0%, 100%": { borderColor: "hsl(0 0% 100% / 0.1)" },
+          "50%": { borderColor: "hsl(0 0% 100% / 0.4)" },
         },
         "spin-slow": {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
+        },
+        "skeleton-shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "ai-thinking": {
+          "0%, 100%": { opacity: "0.3", transform: "scale(0.8)" },
+          "50%": { opacity: "1", transform: "scale(1.1)" },
         },
       },
       animation: {
@@ -124,6 +129,8 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "border-glow": "border-glow 2s ease-in-out infinite",
         "spin-slow": "spin-slow 8s linear infinite",
+        "shimmer": "skeleton-shimmer 2s infinite linear",
+        "thinking": "ai-thinking 1.5s infinite ease-in-out",
       },
     },
   },

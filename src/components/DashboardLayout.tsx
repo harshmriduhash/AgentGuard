@@ -1,10 +1,11 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, FileText, BookOpen, Bot, Settings, LogOut, Menu, X, Github, MessageCircle } from "lucide-react";
+import { Shield, FileText, BookOpen, Bot, Settings, LogOut, Menu, X, Github, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import AnimatedPage from "./AnimatedPage";
 
 const navItems = [
   { to: "/dashboard", label: "PRs", icon: FileText, end: true },
@@ -18,6 +19,7 @@ const navItems = [
 const DashboardLayout = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -26,15 +28,17 @@ const DashboardLayout = () => {
   };
 
   const sidebar = (
-    <div className="flex h-full flex-col border-r border-border/50 bg-sidebar">
-      <div className="flex h-16 items-center gap-2.5 border-b border-border/50 px-6">
+    <div className="flex h-full flex-col border-r border-white/5 bg-black/50 backdrop-blur-xl">
+      <div className="flex h-16 items-center gap-2.5 border-b border-white/5 px-6">
         <div className="relative">
-          <Shield className="h-5 w-5 text-primary" />
-          <div className="absolute inset-0 bg-primary/20 blur-md rounded-full" />
+          <Shield className="h-5 w-5 text-white" />
+          <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
         </div>
-        <span className="font-bold text-sm font-display">AgentGuard<span className="text-primary">.ai</span></span>
+        <span className="font-bold text-sm tracking-tight font-display text-white">
+          AgentGuard<span className="text-white/40">.ai</span>
+        </span>
       </div>
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
@@ -43,22 +47,25 @@ const DashboardLayout = () => {
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
+                "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-300 relative overflow-hidden",
                 isActive
-                  ? "bg-primary/10 text-primary font-medium border border-primary/20"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground border border-transparent"
+                  ? "text-white bg-white/5 border border-white/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.02] border border-transparent"
               )
             }
           >
-            <item.icon className="h-4 w-4" />
+            <item.icon className={cn("h-4 w-4 transition-transform duration-300 group-hover:scale-110", "text-current")} />
             {item.label}
+            {item.label === "Assistant" && (
+              <Sparkles className="h-3 w-3 absolute right-3 text-white/20 animate-pulse" />
+            )}
           </NavLink>
         ))}
       </nav>
-      <div className="border-t border-border/50 p-3">
+      <div className="border-t border-white/5 p-4">
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all duration-300 hover:bg-white/[0.02] hover:text-white"
         >
           <LogOut className="h-4 w-4" />
           Sign out
@@ -97,25 +104,28 @@ const DashboardLayout = () => {
       </AnimatePresence>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 items-center gap-4 border-b border-border/50 px-6 md:hidden">
+      <div className="flex flex-1 flex-col overflow-hidden relative">
+        {/* Subtle noise texture overlay */}
+        <div className="absolute inset-0 noise-overlay pointer-events-none opacity-[0.03]" />
+        
+        <header className="flex h-16 items-center gap-4 border-b border-white/5 px-6 md:hidden glass">
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
           <div className="relative">
-            <Shield className="h-5 w-5 text-primary" />
+            <Shield className="h-5 w-5 text-white" />
           </div>
-          <span className="font-bold text-sm font-display">AgentGuard</span>
+          <span className="font-bold text-sm tracking-tight font-display text-white">AgentGuard</span>
         </header>
-        <main className="flex-1 overflow-auto p-6">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Outlet />
-          </motion.div>
+
+        <main className="flex-1 overflow-auto p-4 md:p-8 mesh-gradient">
+          <AnimatePresence mode="wait">
+            <AnimatedPage key={location.pathname}>
+              <div className="max-w-7xl mx-auto h-full">
+                <Outlet />
+              </div>
+            </AnimatedPage>
+          </AnimatePresence>
         </main>
       </div>
     </div>

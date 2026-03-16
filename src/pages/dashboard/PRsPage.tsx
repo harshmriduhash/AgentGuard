@@ -27,16 +27,16 @@ interface PrAnalysis {
 }
 
 const riskLevel = (score: number | null) => {
-  if (!score || score <= 33) return { label: "Low", color: "bg-success/15 text-success border-success/20" };
-  if (score <= 66) return { label: "Medium", color: "bg-warning/15 text-warning border-warning/20" };
-  return { label: "High", color: "bg-destructive/15 text-destructive border-destructive/20" };
+  if (!score || score <= 33) return { label: "Low", color: "bg-white/5 text-white/60 border-white/10" };
+  if (score <= 66) return { label: "Medium", color: "bg-white/10 text-white/80 border-white/20" };
+  return { label: "High", color: "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" };
 };
 
 const statusIcon = (status: string) => {
   switch (status) {
-    case "pass": return <CheckCircle className="h-4 w-4 text-success" />;
-    case "blocked": return <XCircle className="h-4 w-4 text-destructive" />;
-    default: return <AlertTriangle className="h-4 w-4 text-warning" />;
+    case "pass": return <CheckCircle className="h-4 w-4 text-white/60" />;
+    case "blocked": return <XCircle className="h-4 w-4 text-white" />;
+    default: return <AlertTriangle className="h-4 w-4 text-white/40" />;
   }
 };
 
@@ -97,13 +97,14 @@ const PRsPage = () => {
           </div>
           <StaggerContainer className="grid gap-4 md:grid-cols-3">
             {[
-              { label: "Risk Score", content: <><span className="text-3xl font-bold font-mono">{selected.risk_score ?? 0}</span><span className="text-muted-foreground">/100</span></> },
-              { label: "Risk Level", content: <Badge className={cn(risk.color, "text-xs")}>{risk.label}</Badge> },
-              { label: "Status", content: <div className="flex items-center gap-2">{statusIcon(selected.status)}<span className="capitalize">{selected.status.replace("_", " ")}</span></div> },
+              { label: "Risk Score", content: <><span className="text-4xl font-black font-mono text-white">{selected.risk_score ?? 0}</span><span className="text-white/20 ml-1">/100</span></> },
+              { label: "Risk Level", content: <Badge className={cn(risk.color, "text-[10px] font-bold uppercase tracking-widest px-3 py-1")}>{risk.label}</Badge> },
+              { label: "Status", content: <div className="flex items-center gap-2 text-white/80">{statusIcon(selected.status)}<span className="capitalize text-sm font-medium tracking-wide">{selected.status.replace("_", " ")}</span></div> },
             ].map((card, i) => (
               <StaggerItem key={i}>
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                  <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">{card.label}</CardTitle></CardHeader>
+                <Card className="border-white/5 bg-white/[0.02] backdrop-blur-3xl overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                  <CardHeader className="pb-2"><CardTitle className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/30">{card.label}</CardTitle></CardHeader>
                   <CardContent>{card.content}</CardContent>
                 </Card>
               </StaggerItem>
@@ -119,24 +120,24 @@ const PRsPage = () => {
           )}
           {Object.keys(breakdown).length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-              <Card className="border-border/50 bg-card/80">
-                <CardHeader><CardTitle>Risk Breakdown</CardTitle></CardHeader>
+              <Card className="border-white/5 bg-white/[0.02] backdrop-blur-3xl">
+                <CardHeader><CardTitle className="text-lg font-black font-display text-white">Risk Analysis Breakdown</CardTitle></CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {Object.entries(breakdown).map(([category, score]) => (
-                      <div key={category}>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="capitalize font-medium">{category.replace("_", " ")}</span>
-                          <span className="font-mono text-muted-foreground">{score as number}/100</span>
+                      <div key={category} className="group">
+                        <div className="flex justify-between text-[11px] mb-3">
+                          <span className="capitalize font-bold tracking-widest text-white/40 group-hover:text-white/80 transition-colors">{category.replace("_", " ")}</span>
+                          <span className="font-mono text-white/60">{score as number}%</span>
                         </div>
-                        <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${score as number}%` }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
                             className={cn(
-                              "h-2 rounded-full",
-                              (score as number) > 66 ? "bg-destructive" : (score as number) > 33 ? "bg-warning" : "bg-success"
+                              "h-full rounded-full transition-all duration-1000",
+                              (score as number) > 66 ? "bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)]" : "bg-white/40"
                             )}
                           />
                         </div>
@@ -186,20 +187,20 @@ const PRsPage = () => {
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={FileText}
-            title="No PR analyses yet"
-            description="Connect a repo and run your first analysis to see results here."
+            title="Analysis Logs Empty"
+            description="Your neural engine is ready. Connect a repository to begin the security protocol."
           />
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg border border-border/50 overflow-hidden">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-3xl overflow-hidden shadow-2xl">
             <Table>
               <TableHeader>
-                <TableRow className="border-border/50 hover:bg-transparent">
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Repository</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">PR</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Title</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Risk</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Status</TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">Date</TableHead>
+                <TableRow className="border-white/5 hover:bg-transparent bg-white/[0.02]">
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Registry</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">ID</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Subject</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Threat</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Policy</TableHead>
+                  <TableHead className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30 h-12">Timestamp</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -208,18 +209,18 @@ const PRsPage = () => {
                   return (
                     <motion.tr
                       key={a.id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="cursor-pointer border-border/30 hover:bg-accent/50 transition-colors"
+                      className="cursor-pointer border-white/5 hover:bg-white/[0.03] transition-all duration-300 group"
                       onClick={() => setSelected(a)}
                     >
-                      <TableCell className="font-mono text-xs text-muted-foreground">{a.repositories?.full_name ?? "—"}</TableCell>
-                      <TableCell className="font-mono text-xs">#{a.pr_number}</TableCell>
-                      <TableCell className="max-w-xs truncate">{a.title}</TableCell>
-                      <TableCell><Badge className={cn(risk.color, "text-xs border")}>{risk.label}</Badge></TableCell>
-                      <TableCell><div className="flex items-center gap-2">{statusIcon(a.status)}<span className="capitalize text-xs">{a.status.replace("_", " ")}</span></div></TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell className="font-mono text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{a.repositories?.full_name ?? "—"}</TableCell>
+                      <TableCell className="font-mono text-[10px] text-white/80 font-bold tracking-tight">#{a.pr_number}</TableCell>
+                      <TableCell className="max-w-xs truncate text-sm text-white/90 font-medium">{a.title}</TableCell>
+                      <TableCell><Badge className={cn(risk.color, "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border-0")}>{risk.label}</Badge></TableCell>
+                      <TableCell><div className="flex items-center gap-2">{statusIcon(a.status)}<span className="capitalize text-[10px] font-bold tracking-widest text-white/40 group-hover:text-white/80 transition-colors">{a.status.replace("_", " ")}</span></div></TableCell>
+                      <TableCell className="text-[10px] font-mono text-white/20 group-hover:text-white/50">{new Date(a.created_at).toLocaleDateString()}</TableCell>
                     </motion.tr>
                   );
                 })}

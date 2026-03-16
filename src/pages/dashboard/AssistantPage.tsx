@@ -88,34 +88,36 @@ const AssistantPage = () => {
             <p className="text-sm text-muted-foreground">AI-powered assistant for PR analysis and security insights.</p>
           </div>
 
-          <Card className="h-[520px] flex flex-col border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b border-border/30">
-              <CardTitle className="text-sm font-medium">Conversation</CardTitle>
-              <Badge variant="outline" className="text-xs border-border/50">
-                {mode === "agentic" ? "⚡ Agentic" : "💬 Chat"}
+          <Card className="h-[600px] flex flex-col border-white/5 bg-white/[0.01] backdrop-blur-3xl overflow-hidden shadow-2xl relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 border-b border-white/5 bg-white/[0.02]">
+              <CardTitle className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Neural Interface</CardTitle>
+              <Badge className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border-0", mode === "agentic" ? "bg-white text-black" : "bg-white/10 text-white/60")}>
+                {mode === "agentic" ? "Agentic Protocol" : "Conversational"}
               </Badge>
             </CardHeader>
-            <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden pt-4">
-              <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border border-border/30 bg-background/50 p-4">
+            <CardContent className="flex flex-1 flex-col gap-6 overflow-hidden pt-6 relative">
+              <div className="flex-1 space-y-4 overflow-y-auto rounded-2xl border border-white/5 bg-black/20 p-6 custom-scrollbar">
                 <AnimatePresence mode="popLayout">
                   {messages.map((m, idx) => (
                     <motion.div
                       key={idx}
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                       className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                     >
-                      <div className={`max-w-[80%] rounded-xl px-4 py-3 text-sm ${
+                      <div className={cn(
+                        "max-w-[85%] rounded-2xl px-5 py-3.5 text-sm shadow-xl transition-all duration-300",
                         m.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-card border border-border/50 text-foreground"
-                      }`}>
+                          ? "bg-white text-black font-bold tracking-tight"
+                          : "bg-white/[0.05] border border-white/10 text-white/80 backdrop-blur-md"
+                      )}>
                         <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
                         {m.role === "assistant" && (
-                          <button type="button" onClick={() => speak(m.content)} className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-                            <Volume2 className="h-3 w-3" /> Listen
+                          <button type="button" onClick={() => speak(m.content)} className="mt-3 flex items-center gap-2 text-[9px] uppercase font-black tracking-widest text-white/30 hover:text-white transition-colors group/btn">
+                            <Volume2 className="h-3 w-3 opacity-50 group-hover/btn:opacity-100" /> Listen Logic
                           </button>
                         )}
                       </div>
@@ -124,29 +126,50 @@ const AssistantPage = () => {
                 </AnimatePresence>
                 {loading && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                    <div className="bg-card border border-border/50 rounded-xl px-4 py-3">
+                    <div className="bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 backdrop-blur-md shadow-lg">
                       <AIThinkingInline />
                     </div>
                   </motion.div>
                 )}
               </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Button type="button" size="icon" variant={listening ? "destructive" : "outline"} onClick={listening ? undefined : startListening} className="shrink-0 border-border/50">
-                    {listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+ 
+              <div className="space-y-4">
+                <div className="flex items-end gap-3">
+                  <Button type="button" size="icon" variant={listening ? "destructive" : "outline"} onClick={listening ? undefined : startListening} className={cn("shrink-0 h-12 w-12 rounded-xl border-white/10 bg-white/[0.03] hover:bg-white/10 transition-all", listening && "animate-pulse")}>
+                    {listening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                   </Button>
-                  <Textarea rows={2} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Ask about a risky PR, rules, or security..." className="bg-background/50 border-border/50 focus:border-primary/50" />
+                  <Textarea 
+                    rows={1} 
+                    value={input} 
+                    onChange={(e) => setInput(e.target.value)} 
+                    onKeyDown={handleKeyDown} 
+                    placeholder="Dispatch command to neural core..." 
+                    className="bg-white/[0.03] border-white/10 text-white/80 focus:ring-white/20 min-h-[48px] max-h-32 py-3 px-4 rounded-xl transition-all resize-none shadow-inner" 
+                  />
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <Button type="button" size="sm" variant={mode === "conversational" ? "default" : "outline"} onClick={() => setMode("conversational")} className={mode === "conversational" ? "" : "border-border/50"}>Chat</Button>
-                    <Button type="button" size="sm" variant={mode === "agentic" ? "default" : "outline"} onClick={() => setMode("agentic")} className={cn("gap-1.5", mode === "agentic" ? "" : "border-border/50")}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/5">
+                    <button 
+                      onClick={() => setMode("conversational")}
+                      className={cn(
+                        "px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300",
+                        mode === "conversational" ? "bg-white text-black shadow-lg" : "text-white/30 hover:text-white/60"
+                      )}
+                    >
+                      Chat
+                    </button>
+                    <button 
+                      onClick={() => setMode("agentic")}
+                      className={cn(
+                        "px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 flex items-center gap-1.5",
+                        mode === "agentic" ? "bg-white text-black shadow-lg" : "text-white/30 hover:text-white/60"
+                      )}
+                    >
                       <Zap className="h-3 w-3" /> Agentic
-                    </Button>
+                    </button>
                   </div>
-                  <Button type="button" size="sm" onClick={sendMessage} disabled={loading} className="glow-primary">
-                    {loading ? <span className="flex items-center gap-2"><span className="h-3 w-3 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> Thinking...</span> : "Send"}
+                  <Button type="button" size="sm" onClick={sendMessage} disabled={loading} className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-8 h-10 rounded-xl shadow-[0_0_25px_rgba(255,255,255,0.15)] transition-all active:scale-95">
+                    {loading ? "Processing..." : "Dispatch"}
                   </Button>
                 </div>
               </div>
@@ -154,25 +177,30 @@ const AssistantPage = () => {
           </Card>
         </div>
 
-        <div className="space-y-4">
-          <Card className="border-border/50 bg-card/80">
-            <CardHeader><CardTitle className="text-sm">What can this assistant do?</CardTitle></CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <ul className="list-none space-y-2">
-                {["Explain what a high-risk PR means in practical terms", "Suggest new rules to catch risky AI-generated changes", "Outline step-by-step plans to harden your repos", "Help you design processes around AgentGuard"].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                    {item}
+        <div className="space-y-6">
+          <Card className="border-white/5 bg-white/[0.02] backdrop-blur-3xl overflow-hidden relative shadow-xl">
+             <CardHeader><CardTitle className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Capabilities Registry</CardTitle></CardHeader>
+            <CardContent className="space-y-4 text-xs text-white/50 pb-6">
+              <ul className="list-none space-y-4">
+                {[
+                  "Deconstruct complex high-risk PR anomalies", 
+                  "Automate custom policy derivation", 
+                  "Synthesize repository hardening stratagems", 
+                  "Architect AgentGuard operational flows"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-4 group/item">
+                    <div className="h-2 w-2 rounded-full bg-white/10 mt-1 shrink-0 group-hover/item:bg-white transition-all shadow-[0_0_8px_rgba(255,255,255,0)] group-hover/item:shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                    <span className="leading-relaxed group-hover/item:text-white/80 transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
-          <Card className="border-border/50 bg-card/80">
-            <CardHeader><CardTitle className="text-sm">Voice AI</CardTitle></CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>Use the microphone to dictate questions and the "Listen" button to hear answers.</p>
-              <p className="text-xs text-muted-foreground/70">Voice runs in-browser. Analysis uses the backend AI engine.</p>
+          <Card className="border-white/5 bg-white/[0.02] backdrop-blur-3xl overflow-hidden relative shadow-xl">
+            <CardHeader><CardTitle className="text-[10px] uppercase font-black tracking-[0.2em] text-white/30">Neural Synthesis</CardTitle></CardHeader>
+            <CardContent className="space-y-3 text-xs text-white/40 pb-6">
+              <p className="leading-relaxed">Biometric voice protocols enabled. Dictate commands via peripheral uplink.</p>
+              <p className="text-[10px] text-white/20 font-mono">End-to-end encryption active. Responses synthesized via neural core.</p>
             </CardContent>
           </Card>
         </div>

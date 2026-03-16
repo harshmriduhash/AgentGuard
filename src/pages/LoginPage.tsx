@@ -41,39 +41,42 @@ const LoginPage = () => {
         transition={{ duration: 0.6 }}
         className="relative z-10 w-full max-w-sm space-y-8"
       >
-        <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-xl p-8 glow-primary">
-          <div className="absolute -top-px left-12 right-12 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-          <div className="text-center mb-8">
+        <div className="rounded-3xl border border-white/5 bg-black/40 backdrop-blur-2xl p-10 shadow-[0_40px_80px_-40px_rgba(0,0,0,1)] relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          
+          <div className="text-center mb-10">
             <Link to="/" className="inline-flex items-center gap-2.5 group">
               <div className="relative">
-                <Shield className="h-8 w-8 text-primary" />
-                <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full" />
+                <Shield className="h-8 w-8 text-white" />
+                <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
               </div>
-              <span className="text-2xl font-bold font-display">AgentGuard<span className="text-primary">.ai</span></span>
+              <span className="text-2xl font-black tracking-tight font-display text-white">AgentGuard<span className="text-white/40">.ai</span></span>
             </Link>
-            <p className="mt-3 text-sm text-muted-foreground">Sign in to your account</p>
+            <p className="mt-4 text-sm text-white/40 font-light uppercase tracking-widest px-4">Secure Access Gateway</p>
           </div>
-          <form onSubmit={handleLogin} className="space-y-5">
+          
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs text-muted-foreground uppercase tracking-wider">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className="bg-muted/50 border-border/50 focus:border-primary/50" />
+              <Label htmlFor="email" className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold ml-1">Email Address</Label>
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@company.com" required className="h-12 bg-white/[0.03] border-white/5 focus:border-white/20 focus:ring-0 transition-all rounded-xl placeholder:text-white/10 text-white" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs text-muted-foreground uppercase tracking-wider">Password</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required className="bg-muted/50 border-border/50 focus:border-primary/50" />
+              <Label htmlFor="password" colonial-Label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold ml-1">Key Phrase</Label>
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required className="h-12 bg-white/[0.03] border-white/5 focus:border-white/20 focus:ring-0 transition-all rounded-xl placeholder:text-white/10 text-white" />
             </div>
-            <Button type="submit" className="w-full glow-primary" disabled={loading}>
+            <Button type="submit" className="w-full h-12 bg-white text-black hover:bg-white/90 rounded-xl font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]" disabled={loading}>
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Signing in...
+                  <span className="h-4 w-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Authenticating...
                 </span>
-              ) : "Sign in"}
+              ) : "Initialize Session"}
             </Button>
           </form>
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
+          
+          <p className="text-center text-xs text-white/30 mt-8 font-light">
+            New operative?{" "}
+            <Link to="/signup" className="text-white hover:text-white font-medium underline underline-offset-4 transition-colors">Create credentials</Link>
           </p>
         </div>
       </motion.div>

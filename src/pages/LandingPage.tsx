@@ -10,27 +10,27 @@ const Navbar = () => (
     initial={{ y: -20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     transition={{ duration: 0.5 }}
-    className="fixed top-0 left-0 right-0 z-50 border-b border-border/30 bg-background/60 backdrop-blur-2xl"
+    className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/40 backdrop-blur-2xl"
   >
     <div className="container mx-auto flex h-16 items-center justify-between px-6">
       <Link to="/" className="flex items-center gap-2.5 group">
         <div className="relative">
-          <Shield className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
-          <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full" />
+          <Shield className="h-6 w-6 text-white transition-transform duration-500 group-hover:scale-110" />
+          <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
         </div>
-        <span className="text-lg font-bold tracking-tight font-display">
-          AgentGuard<span className="text-primary">.ai</span>
+        <span className="text-lg font-bold tracking-tight font-display text-white">
+          AgentGuard<span className="text-white/40">.ai</span>
         </span>
       </Link>
       <div className="hidden items-center gap-8 md:flex">
-        <a href="#how-it-works" className="text-sm text-muted-foreground transition-colors hover:text-foreground">How it works</a>
-        <a href="#pricing" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Pricing</a>
+        <a href="#how-it-works" className="text-sm text-white/60 transition-colors hover:text-white">How it works</a>
+        <a href="#pricing" className="text-sm text-white/60 transition-colors hover:text-white">Pricing</a>
       </div>
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" asChild>
+        <Button variant="ghost" size="sm" className="text-white/60 hover:text-white" asChild>
           <Link to="/login">Log in</Link>
         </Button>
-        <Button size="sm" className="glow-primary" asChild>
+        <Button size="sm" className="bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]" asChild>
           <Link to="/signup">Get Started</Link>
         </Button>
       </div>
@@ -67,19 +67,19 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm text-primary backdrop-blur-sm"
+            className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-white/80 backdrop-blur-md transition-colors hover:border-white/20"
           >
-            <Zap className="h-3.5 w-3.5" />
+            <Zap className="h-3.5 w-3.5 text-white/60" />
             AI-Powered Code Review Guardian
-            <ChevronRight className="h-3.5 w-3.5" />
+            <ChevronRight className="h-3.5 w-3.5 text-white/40" />
           </motion.div>
           
-          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.1] tracking-tight font-display md:text-7xl lg:text-8xl">
+          <h1 className="mx-auto max-w-4xl text-5xl font-black leading-[1.05] tracking-tight font-display md:text-6xl lg:text-7xl text-white">
             Control what AI{" "}
-            <span className="text-gradient">agents ship</span>
+            <span className="bg-gradient-to-r from-white via-white to-white/20 bg-clip-text text-transparent">agents ship</span>
           </h1>
           
-          <p className="mx-auto mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed md:text-xl">
+          <p className="mx-auto mt-8 max-w-2xl text-lg text-white/60 leading-relaxed md:text-xl font-light">
             AI agents write code faster than humans can review. AgentGuard analyzes every AI-generated PR for security risks, breaking changes, and policy violations.
           </p>
           
@@ -89,12 +89,12 @@ const HeroSection = () => {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Button size="lg" className="gap-2 px-8 text-base glow-primary hover:glow-primary-intense transition-shadow" asChild>
+            <Button size="lg" className="h-14 gap-2 px-10 text-base bg-white text-black hover:bg-white/90 shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] rounded-full" asChild>
               <Link to="/signup">
                 Start Free <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="px-8 text-base border-border/50 hover:border-primary/30 hover:bg-primary/5" asChild>
+            <Button variant="outline" size="lg" className="h-14 px-10 text-base border-white/10 hover:border-white/20 hover:bg-white/5 text-white/80 rounded-full" asChild>
               <a href="#how-it-works">See how it works</a>
             </Button>
           </motion.div>
@@ -106,23 +106,31 @@ const HeroSection = () => {
           transition={{ duration: 1, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           className="mx-auto mt-24 max-w-3xl"
         >
-          <div className="relative rounded-xl border border-border/50 bg-card/80 backdrop-blur-xl p-6 font-mono text-sm text-left glow-primary">
-            <div className="absolute -top-px left-20 right-20 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-            <div className="mb-4 flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-destructive/40" />
-              <div className="h-3 w-3 rounded-full bg-warning/40" />
-              <div className="h-3 w-3 rounded-full bg-muted-foreground/30" />
-              <span className="ml-3 text-xs text-muted-foreground">agentguard-analysis.yml</span>
+          <div className="relative rounded-2xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 font-mono text-sm text-left shadow-[0_40px_80px_-40px_rgba(0,0,0,1)] group hover:border-white/10 transition-colors duration-500 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-white/10" />
+                <div className="h-3 w-3 rounded-full bg-white/10" />
+                <div className="h-3 w-3 rounded-full bg-white/10" />
+                <span className="ml-3 text-xs text-white/40 font-medium">agentguard-analysis.yml</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/40">
+                <Shield className="h-3.5 w-3.5" />
+                <span className="text-[10px] uppercase tracking-widest font-bold">Encrypted</span>
+              </div>
             </div>
-            <pre className="overflow-x-auto text-muted-foreground leading-relaxed">
+            <pre className="overflow-x-auto text-white/70 leading-relaxed custom-scrollbar">
 {`- name: AgentGuard Analysis
   uses: agentguard/analyze@v1
   with:
     risk-threshold: medium
     block-on: [security, breaking-changes]
     
-# ✅ PR #482 — Risk: Low — Status: Passed
-# ⚠️ PR #483 — Risk: High — Status: Blocked
+# ✅ PR #482 — Risk: Low — Pass
+# ⚠️ PR #483 — Risk: High — Blocked
 #    → Detected: API key in plaintext (line 42)`}</pre>
           </div>
         </motion.div>
@@ -149,10 +157,10 @@ const StatsSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="text-center"
+            className="text-center group"
           >
-            <div className="text-3xl font-bold font-display text-gradient md:text-4xl">{stat.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{stat.label}</div>
+            <div className="text-4xl font-black font-display text-white md:text-5xl group-hover:scale-110 transition-transform duration-500">{stat.value}</div>
+            <div className="mt-2 text-[10px] uppercase font-black tracking-widest text-white/30 group-hover:text-white/60 transition-colors">{stat.label}</div>
           </motion.div>
         ))}
       </div>
@@ -167,8 +175,8 @@ const problems = [
 ];
 
 const ProblemSection = () => (
-  <section className="relative border-t border-border/30 py-24">
-    <div className="absolute inset-0 mesh-gradient opacity-30" />
+  <section className="relative border-t border-white/5 py-32 overflow-hidden">
+    <div className="absolute inset-0 mesh-gradient opacity-10" />
     <div className="container relative mx-auto px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -176,14 +184,15 @@ const ProblemSection = () => (
         viewport={{ once: true }}
         className="mx-auto max-w-3xl text-center"
       >
-        <h2 className="text-3xl font-bold font-display md:text-5xl">
-          AI agents move fast. <span className="text-gradient">Too fast.</span>
+        <h2 className="text-4xl font-black font-display md:text-5xl lg:text-6xl text-white tracking-tighter">
+          AI agents move fast. <br />
+          <span className="bg-gradient-to-r from-white to-white/10 bg-clip-text text-transparent">Too fast.</span>
         </h2>
-        <p className="mt-6 text-lg text-muted-foreground">
-          Copilot, Cursor, Devin, and other AI agents generate thousands of lines daily. Without automated review, vulnerabilities slip through.
+        <p className="mt-8 text-lg text-white/50 font-light leading-relaxed">
+          Copilot, Cursor, Devin, and other AI agents generate thousands of lines daily. Without automated review, vulnerabilities slip through at machine speed.
         </p>
       </motion.div>
-      <div className="mt-16 grid gap-6 md:grid-cols-3">
+      <div className="mt-20 grid gap-6 md:grid-cols-3">
         {problems.map((item, i) => (
           <motion.div
             key={i}
@@ -191,15 +200,17 @@ const ProblemSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.15 }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="group relative rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-8 transition-colors hover:border-primary/30 hover:bg-card/80"
+            whileHover={{ y: -8, transition: { duration: 0.3 } }}
+            className="group relative rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-xl p-8 transition-all duration-500 hover:border-white/20 hover:bg-white/[0.04]"
           >
-            <div className="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/0 to-transparent group-hover:via-primary/40 transition-all duration-500" />
-            <div className="mb-5 inline-flex rounded-lg border border-border bg-muted/50 p-3">
-              <item.icon className="h-5 w-5 text-primary" />
+            <div className="mb-6 inline-flex rounded-xl border border-white/10 bg-white/5 p-4 group-hover:bg-white transition-colors duration-500">
+              <item.icon className="h-6 w-6 text-white group-hover:text-black transition-colors duration-500" />
             </div>
-            <h3 className="text-lg font-semibold font-display">{item.title}</h3>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+            <h3 className="text-xl font-bold font-display text-white">{item.title}</h3>
+            <p className="mt-4 text-sm text-white/40 leading-relaxed font-light">{item.desc}</p>
+            <div className="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/20 group-hover:text-white/60 transition-colors">
+              Critical Risk <ArrowRight className="h-3 w-3" />
+            </div>
           </motion.div>
         ))}
       </div>
@@ -234,11 +245,12 @@ const HowItWorksSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.15 }}
-            className="relative rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-8 hover:border-primary/20 transition-colors"
+            className="relative rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-3xl p-10 group hover:bg-white/[0.03] transition-all duration-500 overflow-hidden"
           >
-            <span className="font-mono text-5xl font-bold text-primary/10">{item.step}</span>
-            <h3 className="mt-4 text-xl font-semibold font-display">{item.title}</h3>
-            <p className="mt-3 text-muted-foreground leading-relaxed">{item.desc}</p>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+            <span className="font-mono text-8xl font-black text-white/[0.02] absolute -right-4 -top-4 group-hover:text-white/[0.05] transition-colors">{item.step}</span>
+            <h3 className="mt-4 text-2xl font-black font-display text-white relative z-10">{item.title}</h3>
+            <p className="mt-4 text-white/40 leading-relaxed font-light relative z-10 text-sm group-hover:text-white/60 transition-colors">{item.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -253,14 +265,14 @@ const plans = [
 ];
 
 const PricingSection = () => (
-  <section id="pricing" className="relative border-t border-border/30 py-24">
-    <div className="absolute inset-0 mesh-gradient opacity-20" />
+  <section id="pricing" className="relative border-t border-white/5 py-32 overflow-hidden">
+    <div className="absolute inset-0 mesh-gradient opacity-5" />
     <div className="container relative mx-auto px-6">
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-        <h2 className="text-center text-3xl font-bold font-display md:text-5xl">Simple, transparent pricing</h2>
-        <p className="mx-auto mt-4 max-w-xl text-center text-muted-foreground">Start free. Scale as your team grows.</p>
+        <h2 className="text-center text-4xl font-black font-display md:text-5xl text-white">Simple, <br /> <span className="text-gradient">Transparent.</span></h2>
+        <p className="mx-auto mt-6 max-w-xl text-center text-white/50 font-light leading-relaxed">Protect your codebase from the next machine-generated error. Start free, scale instantly.</p>
       </motion.div>
-      <div className="mt-16 grid gap-6 md:grid-cols-3">
+      <div className="mt-20 grid gap-8 md:grid-cols-3">
         {plans.map((plan, i) => (
           <motion.div
             key={i}
@@ -268,33 +280,37 @@ const PricingSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            whileHover={{ y: -6, transition: { duration: 0.2 } }}
-            className={`relative rounded-xl border p-8 transition-all ${
+            whileHover={{ y: -12, transition: { duration: 0.3 } }}
+            className={`relative rounded-3xl border p-10 transition-all duration-500 ${
               plan.featured
-                ? "border-primary/40 bg-card/80 glow-primary backdrop-blur-xl"
-                : "border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/20"
+                ? "border-white/20 bg-white/[0.04] shadow-[0_0_50px_rgba(255,255,255,0.05)] backdrop-blur-3xl"
+                : "border-white/5 bg-transparent hover:border-white/10"
             }`}
           >
             {plan.featured && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
-                Popular
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-white px-5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-black shadow-xl">
+                Recommended
               </div>
             )}
-            <h3 className="text-xl font-semibold font-display">{plan.name}</h3>
-            <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-4xl font-bold font-display">{plan.price}</span>
-              <span className="text-muted-foreground">{plan.period}</span>
+            <h3 className="text-2xl font-black font-display text-white">{plan.name}</h3>
+            <div className="mt-6 flex items-baseline gap-2">
+              <span className="text-5xl font-black font-display text-white">{plan.price}</span>
+              <span className="text-white/40 font-medium">{plan.period}</span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">{plan.checks}</p>
-            <ul className="mt-8 space-y-3">
+            <p className="mt-3 text-sm text-white/40 font-light">{plan.checks}</p>
+            <ul className="mt-10 space-y-4">
               {plan.features.map((f, j) => (
-                <li key={j} className="flex items-center gap-3 text-sm">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                <li key={j} className="flex items-center gap-3 text-sm text-white/60 font-light">
+                  <div className="h-1.5 w-1.5 rounded-full bg-white/20 group-hover:bg-white transition-colors" />
                   {f}
                 </li>
               ))}
             </ul>
-            <Button className="mt-8 w-full" variant={plan.featured ? "default" : "outline"} asChild>
+            <Button size="lg" className={`mt-10 w-full h-12 rounded-xl font-bold transition-all duration-500 ${
+              plan.featured 
+                ? "bg-white text-black hover:bg-white/90 shadow-xl" 
+                : "border-white/10 bg-white/5 text-white hover:bg-white hover:text-black hover:border-white shadow-none"
+            }`} asChild>
               <Link to="/signup">Get Started</Link>
             </Button>
           </motion.div>
