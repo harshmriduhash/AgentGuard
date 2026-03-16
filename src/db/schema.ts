@@ -30,7 +30,6 @@ export const agents = pgTable('agents', {
   approvalsCount: integer('approvals_count').default(0),
   userId: text('user_id').references(() => profiles.id),
 });
-创新: Schema enhancement for multi-tenant agent tracking.
 
 export const rules = pgTable('rules', {
   id: serial('id').primaryKey(),
