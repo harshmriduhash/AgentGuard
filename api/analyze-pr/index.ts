@@ -2,7 +2,6 @@ import { db } from "../../src/db";
 import { repositories, prAnalyses, rules, subscriptions, agents } from "../../src/db/schema";
 import { eq, and, gte, sql } from "drizzle-orm";
 
-const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
 
 export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") {
@@ -52,24 +51,38 @@ export default async function handler(req: any, res: any) {
 
     const rulesContext = activeRules.map(r => `- [${r.type}] ${r.pattern}: ${r.description}`).join("\n");
 
-    // 4. AI Analysis
-    const systemPrompt = `Analyze PR #${pr_number}: ${title}. Focus on Security, Performance, and Breaking Changes. Rules:\n${rulesContext}\nReturn JSON: summary, risk_score (0-100), status (pass/needs_review/blocked), breakdown, violations.`;
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // 4. AI Analysis
+    const systemPrompt = `Analyze PR #${pr_number}: ${title}. Focus on Security, Performance, and Breaking Changes. Rules:
+${rulesContext}
+Return ONLY a raw JSON object with: summary, risk_score (0-100), status (pass/needs_review/blocked), breakdown, violations.`;
+
+    const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [{ role: "system", content: systemPrompt }, { role: "user", content: diff.substring(0, 20000) }],
-        temperature: 0.1
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: systemPrompt }, 
+          { role: "user", content: diff.substring(0, 30000) }
+        ],
+        temperature: 0.1,
+        response_format: { type: "json_object" }
       })
     });
 
+    if (!aiRes.ok) {
+      const errorText = await aiRes.text();
+      console.error("OpenAI Error:", errorText);
+      throw new Error(`OpenAI API failed: ${errorText}`);
+    }
+
     const aiData = await aiRes.json();
-    const analysis = JSON.parse(aiData.choices[0].message.content.replace(/```json|```/g, ""));
+    const analysis = JSON.parse(aiData.choices[0].message.content);
 
     // 5. Update DB
     const [insertedAnalysis] = await db.insert(prAnalyses).values({

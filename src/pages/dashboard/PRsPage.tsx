@@ -130,9 +130,9 @@ const PRsPage = () => {
             <p className="text-sm text-muted-foreground">All analyzed PRs across your repositories</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40 bg-card/50 border-border/50"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-40 bg-card/50 border-border/50"><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pass">Pass</SelectItem>
@@ -141,7 +141,7 @@ const PRsPage = () => {
             </SelectContent>
           </Select>
           <Select value={riskFilter} onValueChange={setRiskFilter}>
-            <SelectTrigger className="w-40 bg-card/50 border-border/50"><SelectValue placeholder="Risk" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-40 bg-card/50 border-border/50"><SelectValue placeholder="Risk" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Risk</SelectItem>
               <SelectItem value="low">Low</SelectItem>

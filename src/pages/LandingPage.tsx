@@ -4,58 +4,78 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ParticleField } from "@/components/ParticleField";
 import { useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
-const Navbar = () => (
-  <motion.nav
-    initial={{ y: -20, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 0.5 }}
-    className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/40 backdrop-blur-2xl"
-  >
-    <div className="container mx-auto flex h-16 items-center justify-between px-6">
-      <Link to="/" className="flex items-center gap-2.5 group">
-        <div className="relative">
-          <Shield className="h-6 w-6 text-white transition-transform duration-500 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
+const Navbar = () => {
+  const { user } = useAuth();
+  return (
+    <motion.nav
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/40 backdrop-blur-2xl"
+    >
+      <div className="container mx-auto flex h-16 items-center justify-between px-6">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative">
+            <img src="/assets/logo.png" alt="AgentGuard" className="h-8 w-8 object-contain transition-transform duration-500 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-white/10 blur-xl rounded-full animate-glow-pulse" />
+          </div>
+          <span className="text-xl font-bold tracking-tight font-display text-white">
+            AgentGuard<span className="text-white/40">.ai</span>
+          </span>
+        </Link>
+        <div className="hidden items-center gap-8 md:flex">
+          <a href="#how-it-works" className="text-sm text-white/60 transition-colors hover:text-white">How it works</a>
+          <a href="#pricing" className="text-sm text-white/60 transition-colors hover:text-white">Pricing</a>
         </div>
-        <span className="text-lg font-bold tracking-tight font-display text-white">
-          AgentGuard<span className="text-white/40">.ai</span>
-        </span>
-      </Link>
-      <div className="hidden items-center gap-8 md:flex">
-        <a href="#how-it-works" className="text-sm text-white/60 transition-colors hover:text-white">How it works</a>
-        <a href="#pricing" className="text-sm text-white/60 transition-colors hover:text-white">Pricing</a>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <Button size="sm" className="bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 rounded-full h-9 px-5" asChild>
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex text-white/60 hover:text-white" asChild>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button size="sm" className="bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 rounded-full h-9 px-5" asChild>
+                <Link to="/signup">Get Started</Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" className="text-white/60 hover:text-white" asChild>
-          <Link to="/login">Log in</Link>
-        </Button>
-        <Button size="sm" className="bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]" asChild>
-          <Link to="/signup">Get Started</Link>
-        </Button>
-      </div>
-    </div>
-  </motion.nav>
-);
+    </motion.nav>
+  );
+};
 
 const HeroSection = () => {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const { user } = useAuth();
 
   return (
     <section ref={ref} className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
-      {/* Particle background */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 h-full w-full">
         <ParticleField className="absolute inset-0" />
       </div>
       {/* Mesh gradient overlay */}
       <div className="absolute inset-0 mesh-gradient z-[1]" />
+      {/* Brand Banner with parallax-like effect */}
+      <div className="absolute inset-0 z-[1] overflow-hidden opacity-30">
+        <img 
+          src="/assets/banner.png" 
+          alt="" 
+          className="w-full h-full object-cover scale-110 blur-[2px]"
+        />
+      </div>
       {/* Grid */}
       <div className="absolute inset-0 grid-pattern opacity-20 z-[2]" />
       {/* Radial fade */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-[3]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-[3]" />
       
       <motion.div style={{ y, opacity }} className="container relative z-10 mx-auto px-6 text-center">
         <motion.div
@@ -90,8 +110,8 @@ const HeroSection = () => {
             className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
             <Button size="lg" className="h-14 gap-2 px-10 text-base bg-white text-black hover:bg-white/90 shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] rounded-full" asChild>
-              <Link to="/signup">
-                Start Free <ArrowRight className="h-4 w-4" />
+              <Link to={user ? "/dashboard" : "/signup"}>
+                {user ? "Go to Dashboard" : "Start Free"} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="h-14 px-10 text-base border-white/10 hover:border-white/20 hover:bg-white/5 text-white/80 rounded-full" asChild>
@@ -323,9 +343,9 @@ const PricingSection = () => (
 const Footer = () => (
   <footer className="border-t border-border/30 py-12">
     <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 md:flex-row">
-      <div className="flex items-center gap-2">
-        <Shield className="h-5 w-5 text-primary" />
-        <span className="font-semibold font-display">AgentGuard.ai</span>
+      <div className="flex items-center gap-3">
+        <img src="/assets/logo.png" alt="" className="h-6 w-6 object-contain" />
+        <span className="font-bold font-display text-white tracking-tight">AgentGuard.ai</span>
       </div>
       <p className="text-sm text-muted-foreground">© 2026 AgentGuard. All rights reserved.</p>
     </div>

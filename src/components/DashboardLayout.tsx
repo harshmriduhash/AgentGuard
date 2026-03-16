@@ -29,12 +29,12 @@ const DashboardLayout = () => {
 
   const sidebar = (
     <div className="flex h-full flex-col border-r border-white/5 bg-black/50 backdrop-blur-xl">
-      <div className="flex h-16 items-center gap-2.5 border-b border-white/5 px-6">
+      <div className="flex h-16 items-center gap-3 border-b border-white/5 px-6">
         <div className="relative">
-          <Shield className="h-5 w-5 text-white" />
-          <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
+          <img src="/assets/logo.png" alt="" className="h-6 w-6 object-contain" />
+          <div className="absolute inset-0 bg-white/10 blur-xl rounded-full animate-glow-pulse" />
         </div>
-        <span className="font-bold text-sm tracking-tight font-display text-white">
+        <span className="font-bold text-sm tracking-tight font-display text-white whitespace-nowrap">
           AgentGuard<span className="text-white/40">.ai</span>
         </span>
       </div>
@@ -108,14 +108,16 @@ const DashboardLayout = () => {
         {/* Subtle noise texture overlay */}
         <div className="absolute inset-0 noise-overlay pointer-events-none opacity-[0.03]" />
         
-        <header className="flex h-16 items-center gap-4 border-b border-white/5 px-6 md:hidden glass">
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="relative">
-            <Shield className="h-5 w-5 text-white" />
+        <header className="flex h-16 items-center justify-between border-b border-white/5 px-6 md:hidden glass z-20">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="text-white/60">
+              <Menu className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <img src="/assets/logo.png" alt="" className="h-5 w-5 object-contain" />
+              <span className="font-bold text-sm tracking-tight font-display text-white">AgentGuard</span>
+            </div>
           </div>
-          <span className="font-bold text-sm tracking-tight font-display text-white">AgentGuard</span>
         </header>
 
         <main className="flex-1 overflow-auto p-4 md:p-8 mesh-gradient">

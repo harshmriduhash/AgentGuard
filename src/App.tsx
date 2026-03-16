@@ -50,70 +50,58 @@ const ConfigError = () => (
 const App = () => {
   const isConfigured = !!CLERK_PUBLISHABLE_KEY && !CLERK_PUBLISHABLE_KEY.includes("...");
 
+  const AppContent = () => (
+    <Routes>
+      {/* Public Route - Landing Page */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="*" element={<NotFound />} />
+
+      {/* Routes requiring Auth or Config Check */}
+      <Route
+        path="/login"
+        element={isConfigured ? <LoginPage /> : <ConfigError />}
+      />
+      <Route
+        path="/signup"
+        element={isConfigured ? <SignupPage /> : <ConfigError />}
+      />
+      <Route
+        path="/dashboard"
+        element={
+          isConfigured ? (
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          ) : (
+            <ConfigError />
+          )
+        }
+      >
+        <Route index element={<PRsPage />} />
+        <Route path="rules" element={<RulesPage />} />
+        <Route path="agents" element={<AgentsPage />} />
+        <Route path="assistant" element={<AssistantPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="github-setup" element={<GitHubSetupPage />} />
+      </Route>
+    </Routes>
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes - No Clerk required */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="*" element={<NotFound />} />
-
-            {/* Auth & Protected Routes - Require valid configuration */}
-            <Route
-              path="/login"
-              element={
-                isConfigured ? (
-                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
-                    <AuthProvider>
-                      <LoginPage />
-                    </AuthProvider>
-                  </ClerkProvider>
-                ) : (
-                  <ConfigError />
-                )
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                isConfigured ? (
-                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
-                    <AuthProvider>
-                      <SignupPage />
-                    </AuthProvider>
-                  </ClerkProvider>
-                ) : (
-                  <ConfigError />
-                )
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                isConfigured ? (
-                  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
-                    <AuthProvider>
-                      <ProtectedRoute>
-                        <DashboardLayout />
-                      </ProtectedRoute>
-                    </AuthProvider>
-                  </ClerkProvider>
-                ) : (
-                  <ConfigError />
-                )
-              }
-            >
-              <Route index element={<PRsPage />} />
-              <Route path="rules" element={<RulesPage />} />
-              <Route path="agents" element={<AgentsPage />} />
-              <Route path="assistant" element={<AssistantPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="github-setup" element={<GitHubSetupPage />} />
-            </Route>
-          </Routes>
+          {isConfigured ? (
+            <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!}>
+              <AuthProvider>
+                <AppContent />
+              </AuthProvider>
+            </ClerkProvider>
+          ) : (
+            <AppContent />
+          )}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
