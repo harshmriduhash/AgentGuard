@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,6 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { AIThinkingInline } from "@/components/ui/ai-thinking";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useState } from "react"; // Added useState import
 
 type Role = "user" | "assistant";
 interface ChatMessage { role: Role; content: string; }
@@ -24,7 +24,6 @@ const AssistantPage = () => {
   const [mode, setMode] = useState<"conversational" | "agentic">("conversational");
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
-
 
   const sendMessage = async () => {
     if (!input.trim()) return;
