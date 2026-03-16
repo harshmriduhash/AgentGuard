@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ClerkProvider } from "@clerk/clerk-react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
@@ -18,9 +19,16 @@ import AssistantPage from "./pages/dashboard/AssistantPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error("Missing Clerk Publishable Key");
+}
+
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -43,6 +51,7 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
+</ClerkProvider>
 );
 
 export default App;
