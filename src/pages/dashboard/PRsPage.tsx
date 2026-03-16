@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB migration
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,11 +19,9 @@ interface PrAnalysis {
   title: string;
   summary: string | null;
   risk_score: number | null;
-  risk_breakdown: Record<string, number>;
   status: string;
   created_at: string;
-  repository_id: string;
-  repositories?: { full_name: string | null } | null;
+  repo_name: string; // Updated from repositories join
 }
 
 const riskLevel = (score: number | null) => {
@@ -93,7 +91,7 @@ const PRsPage = () => {
           </button>
           <div>
             <h1 className="text-2xl font-bold font-display">PR #{selected.pr_number}: {selected.title}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{selected.repositories?.full_name}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{selected.repo_name}</p>
           </div>
           <StaggerContainer className="grid gap-4 md:grid-cols-3">
             {[
