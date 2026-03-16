@@ -21,7 +21,6 @@ export default async function handler(req: any, res: any) {
       }).returning();
     }
     
-    // Map to camelCase or just return direct
     return res.status(200).json({
       plan: data.planTier,
       pr_checks_used: data.prChecksUsed,

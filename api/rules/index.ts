@@ -1,6 +1,6 @@
 import { db } from "../../src/db";
 import { rules, repositories } from "../../src/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export default async function handler(req: any, res: any) {
   const userId = req.headers["x-user-id"]; 
