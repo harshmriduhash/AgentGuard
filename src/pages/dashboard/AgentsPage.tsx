@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

@@ -1,21 +1,6 @@
-import { useEffect, useState } from "react";
-// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB migration
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Plus, BookOpen, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { ShimmerTable } from "@/components/ui/shimmer";
-import { EmptyState } from "@/components/ui/empty-state";
-import { PageTransition } from "@/components/ui/page-transition";
-import { motion } from "framer-motion";
+import { useUser } from "@clerk/clerk-react";
 
 interface Repository { id: string; full_name: string | null; }
 interface Rule {

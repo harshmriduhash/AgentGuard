@@ -25,7 +25,6 @@ const AssistantPage = () => {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
 
-  // const functionsBaseUrl = import.meta.env.VITE_SUPABASE_URL.replace(".supabase.co", ".functions.supabase.co");
 
   const sendMessage = async () => {
     if (!input.trim()) return;

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB migration
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +46,7 @@ const PRsPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [riskFilter, setRiskFilter] = useState<string>("all");
   const [loading, setLoading] = useState<boolean>(false);
+  const [listening, setListening] = useState(false);
 
   useEffect(() => {
     if (!user) return;
