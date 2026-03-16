@@ -22,6 +22,7 @@ interface PrAnalysis {
   status: string;
   created_at: string;
   repo_name: string; // Updated from repositories join
+  risk_breakdown?: Record<string, number>;
 }
 
 const riskLevel = (score: number | null) => {
@@ -80,7 +81,7 @@ const PRsPage = () => {
 
   if (selected) {
     const risk = riskLevel(selected.risk_score);
-    const breakdown = selected.risk_breakdown || {};
+    const breakdown = (selected?.risk_breakdown as Record<string, number>) || {};
     return (
       <PageTransition>
         <div className="space-y-6">

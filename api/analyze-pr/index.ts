@@ -41,7 +41,7 @@ export default async function handler(req: any, res: any) {
       where: eq(subscriptions.userId, userId)
     });
 
-    if (sub && sub.prChecksUsed >= sub.prChecksLimit) {
+    if (sub && (sub.prChecksUsed ?? 0) >= (sub.prChecksLimit ?? 0)) {
       return res.status(403).json({ error: "Usage limit exceeded" });
     }
 
@@ -84,7 +84,7 @@ export default async function handler(req: any, res: any) {
     // Usage Increment
     if (sub) {
       await db.update(subscriptions)
-        .set({ prChecksUsed: sub.prChecksUsed + 1 })
+        .set({ prChecksUsed: (sub.prChecksUsed ?? 0) + 1 })
         .where(eq(subscriptions.id, sub.id));
     }
 
