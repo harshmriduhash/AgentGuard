@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,13 +29,16 @@ const SettingsPage = () => {
     if (!user) return;
     setLoadingProfile(true);
     Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).single(),
-      supabase.from("repositories").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("subscriptions").select("*").eq("user_id", user.id).single(),
-    ]).then(([profileRes, reposRes, subRes]) => {
-      if (profileRes.data) setProfile({ display_name: profileRes.data.display_name || "", organization: profileRes.data.organization || "" });
-      if (reposRes.data) setRepos(reposRes.data);
-      if (subRes.data) setSubscription(subRes.data);
+      fetch("/api/settings/profile", { headers: { "x-user-id": user.id } }).then(r => r.json()),
+      fetch("/api/repositories", { headers: { "x-user-id": user.id } }).then(r => r.json()),
+      fetch("/api/settings/subscription", { headers: { "x-user-id": user.id } }).then(r => r.json()),
+    ]).then(([profileData, reposData, subData]) => {
+      if (profileData) setProfile({ display_name: profileData.display_name || "", organization: profileData.organization || "" });
+      if (reposData) setRepos(reposData);
+      if (subData) setSubscription(subData);
+      setLoadingProfile(false);
+    }).catch(err => {
+      toast({ title: "Fetch error", description: err.message, variant: "destructive" });
       setLoadingProfile(false);
     });
   }, [user]);
@@ -43,28 +46,50 @@ const SettingsPage = () => {
   const saveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await supabase.from("profiles").update({ display_name: profile.display_name, organization: profile.organization }).eq("id", user.id);
-    setSaving(false);
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else toast({ title: "Profile updated" });
+    try {
+      const res = await fetch("/api/settings/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-user-id": user.id },
+        body: JSON.stringify({ display_name: profile.display_name, organization: profile.organization })
+      });
+      if (!res.ok) throw new Error("Save failed");
+      toast({ title: "Profile updated" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addRepo = async () => {
     if (!user || !repoForm.owner || !repoForm.name) return;
-    const { error } = await supabase.from("repositories").insert({ user_id: user.id, owner: repoForm.owner, name: repoForm.name });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else {
+    try {
+      const res = await fetch("/api/repositories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-user-id": user.id },
+        body: JSON.stringify(repoForm)
+      });
+      if (!res.ok) throw new Error("Add repo failed");
+      const newRepo = await res.json();
+      setRepos([newRepo, ...repos]);
       setRepoDialogOpen(false);
       setRepoForm({ owner: "", name: "" });
-      const { data } = await supabase.from("repositories").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
-      if (data) setRepos(data);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
   };
 
   const deleteRepo = async (id: string) => {
-    const { error } = await supabase.from("repositories").delete().eq("id", id);
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else setRepos(repos.filter((r) => r.id !== id));
+    try {
+      const res = await fetch(`/api/repositories/${id}`, {
+        method: "DELETE",
+        headers: { "x-user-id": user.id }
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      setRepos(repos.filter((r) => r.id !== id));
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   const planLabels: Record<string, string> = { free: "Free", starter: "Starter — $29/mo", pro: "Pro — $99/mo" };
