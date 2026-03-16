@@ -1,42 +1,10 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { SignUp } from "@clerk/clerk-react";
 import { Shield } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { ParticleField } from "@/components/ParticleField";
+import { Link } from "react-router-dom";
 
 const SignupPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { display_name: displayName },
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We've sent you a confirmation link." });
-      navigate("/login");
-    }
-  };
-
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden">
       <div className="absolute inset-0">
@@ -48,50 +16,44 @@ const SignupPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 w-full max-w-sm space-y-8"
+        className="relative z-10 w-full flex flex-col items-center"
       >
-        <div className="rounded-3xl border border-white/5 bg-black/40 backdrop-blur-2xl p-10 shadow-[0_40px_80px_-40px_rgba(0,0,0,1)] relative overflow-hidden">
-          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          
-          <div className="text-center mb-10">
-            <Link to="/" className="inline-flex items-center gap-2.5 group">
-              <div className="relative">
-                <Shield className="h-8 w-8 text-white" />
-                <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
-              </div>
-              <span className="text-2xl font-black tracking-tight font-display text-white">AgentGuard<span className="text-white/40">.ai</span></span>
-            </Link>
-            <p className="mt-4 text-sm text-white/40 font-light uppercase tracking-widest px-4">Protocol Initialization</p>
-          </div>
-          
-          <form onSubmit={handleSignup} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold ml-1">Identity Name</Label>
-              <Input id="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Operative name" required className="h-12 bg-white/[0.03] border-white/5 focus:border-white/20 focus:ring-0 transition-all rounded-xl placeholder:text-white/10 text-white" />
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center gap-2.5 group">
+            <div className="relative">
+              <Shield className="h-8 w-8 text-white" />
+              <div className="absolute inset-0 bg-white/20 blur-lg rounded-full animate-glow-pulse" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold ml-1">Contact Link</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@company.com" required className="h-12 bg-white/[0.03] border-white/5 focus:border-white/20 focus:ring-0 transition-all rounded-xl placeholder:text-white/10 text-white" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" colonial-Label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold ml-1">Secure Key</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" minLength={6} required className="h-12 bg-white/[0.03] border-white/5 focus:border-white/20 focus:ring-0 transition-all rounded-xl placeholder:text-white/10 text-white" />
-            </div>
-            <Button type="submit" className="w-full h-12 bg-white text-black hover:bg-white/90 rounded-xl font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]" disabled={loading}>
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                  Generating...
-                </span>
-              ) : "Begin Deployment"}
-            </Button>
-          </form>
-          
-          <p className="text-center text-xs text-white/30 mt-8 font-light">
-            Already verified?{" "}
-            <Link to="/login" className="text-white hover:text-white font-medium underline underline-offset-4 transition-colors">Access Portal</Link>
-          </p>
+            <span className="text-2xl font-black tracking-tight font-display text-white">AgentGuard<span className="text-white/40">.ai</span></span>
+          </Link>
         </div>
+
+        <SignUp 
+          appearance={{
+            elements: {
+              rootBox: "mx-auto",
+              card: "bg-black/40 backdrop-blur-2xl border border-white/5 shadow-2xl rounded-3xl p-4",
+              headerTitle: "text-white font-black font-display uppercase tracking-tight",
+              headerSubtitle: "text-white/40 font-light",
+              socialButtonsBlockButton: "bg-white/5 border-white/10 text-white hover:bg-white/10 transition-colors rounded-xl",
+              socialButtonsBlockButtonText: "text-white font-medium",
+              formButtonPrimary: "bg-white text-black hover:bg-white/90 rounded-xl font-bold transition-all shadow-lg",
+              formFieldLabel: "text-[10px] text-white/30 uppercase tracking-widest font-bold",
+              formFieldInput: "bg-white/5 border-white/5 text-white rounded-xl focus:border-white/20 transition-all",
+              footerActionText: "text-white/40",
+              footerActionLink: "text-white hover:text-white underline underline-offset-4",
+              dividerLine: "bg-white/5",
+              dividerText: "text-white/20 text-[10px] uppercase font-bold",
+              identityPreviewText: "text-white",
+              formResendCodeLink: "text-white",
+              otpCodeFieldInput: "bg-white/5 border-white/5 text-white rounded-xl",
+            }
+          }}
+          routing="path"
+          path="/signup"
+          signInUrl="/login"
+          fallbackRedirectUrl="/dashboard"
+        />
       </motion.div>
     </div>
   );
