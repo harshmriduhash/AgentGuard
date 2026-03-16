@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUser } from "@clerk/clerk-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +9,13 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { AIThinkingInline } from "@/components/ui/ai-thinking";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useState } from "react"; // Added useState import
 
 type Role = "user" | "assistant";
 interface ChatMessage { role: Role; content: string; }
 
 const AssistantPage = () => {
-  const { session } = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "assistant", content: "Hi, I'm the AgentGuard Assistant. Ask me anything about your AI-generated PRs, security, or how to set up effective rules." },
@@ -25,7 +25,7 @@ const AssistantPage = () => {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
 
-  const functionsBaseUrl = import.meta.env.VITE_SUPABASE_URL.replace(".supabase.co", ".functions.supabase.co");
+  // const functionsBaseUrl = import.meta.env.VITE_SUPABASE_URL.replace(".supabase.co", ".functions.supabase.co");
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -39,9 +39,9 @@ const AssistantPage = () => {
     setInput("");
     setLoading(true);
     try {
-      const res = await fetch(`${functionsBaseUrl}/chat-assistant`, {
+      const res = await fetch("/api/chat-assistant", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        headers: { "Content-Type": "application/json", "x-user-id": user.id },
         body: JSON.stringify({ mode, messages: nextMessages }),
       });
       const data = await res.json();
