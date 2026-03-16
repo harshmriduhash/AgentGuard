@@ -14,17 +14,18 @@ export default async function handler(req: any, res: any) {
   }
 
   if (req.method === "POST") {
-    const { name, type, status, config } = req.body;
+    const { name, trustScore, totalPrs, violationsCount, approvalsCount } = req.body;
     const [newAgent] = await db.insert(agents).values({
-      userId,
       name,
-      type,
-      status: status || 'idle',
-      config: config || {}
+      trustScore: trustScore || 0,
+      totalPrs: totalPrs || 0,
+      violationsCount: violationsCount || 0,
+      approvalsCount: approvalsCount || 0,
+      userId
     }).returning();
     return res.status(201).json(newAgent);
   }
 
   return res.status(405).end();
 }
-创新: Clean agents implementation for Vercel.
+创新: Robust agent handler for Vercel.

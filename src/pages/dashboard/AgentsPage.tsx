@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,10 +16,10 @@ import { HoverCardInfo } from "@/components/ui/hover-card-info";
 interface Agent {
   id: string;
   name: string;
-  trust_score: number;
-  total_prs: number;
-  violations_count: number;
-  approvals_count: number;
+  trustScore: number;
+  totalPrs: number;
+  violationsCount: number;
+  approvalsCount: number;
 }
 
 const trustColor = (score: number) => {
@@ -45,15 +45,14 @@ const AgentsPage = () => {
     const fetchAgents = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from("agents")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("trust_score", { ascending: false });
-        if (error) {
-          toast({ title: "Failed to load agents", description: error.message, variant: "destructive" });
-        }
-        if (data) setAgents(data);
+        const response = await fetch("/api/agents", {
+          headers: {
+            "x-user-id": user.id,
+          },
+        });
+        if (!response.ok) throw new Error("Failed to load agents");
+        const data = await response.json();
+        setAgents(data);
       } catch (err: any) {
         toast({ title: "Error", description: err?.message, variant: "destructive" });
       } finally {
@@ -109,7 +108,7 @@ const AgentsPage = () => {
                         <div className="space-y-3 p-1">
                           <p className="font-black uppercase tracking-[0.2em] text-[10px] text-white/30">Entity Signature</p>
                           <p className="font-bold text-lg text-white">{agent.name}</p>
-                          <p className="text-[11px] text-white/40 leading-relaxed font-light">Autonomous agent with {agent.total_prs} recorded interactions. Current reliability index: <span className="font-mono text-white/80">{agent.trust_score}%</span></p>
+                          <p className="text-[11px] text-white/40 leading-relaxed font-light">Autonomous agent with {agent.totalPrs} recorded interactions. Current reliability index: <span className="font-mono text-white/80">{agent.trustScore}%</span></p>
                         </div>
                       </HoverCardInfo>
                     </TableCell>
@@ -118,17 +117,17 @@ const AgentsPage = () => {
                         <div className="h-1 w-24 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: `${agent.trust_score}%` }}
+                            animate={{ width: `${agent.trustScore}%` }}
                             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
-                            className={cn("h-full rounded-full transition-all duration-1000", trustBarColor(agent.trust_score))}
+                            className={cn("h-full rounded-full transition-all duration-1000", trustBarColor(agent.trustScore))}
                           />
                         </div>
-                        <span className={cn("text-xs font-mono font-bold tracking-tighter", trustColor(agent.trust_score))}>{agent.trust_score}%</span>
+                        <span className={cn("text-xs font-mono font-bold tracking-tighter", trustColor(agent.trustScore))}>{agent.trustScore}%</span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-white/40 group-hover:text-white/80 transition-colors">{agent.total_prs} logs</TableCell>
-                    <TableCell><span className="text-white font-mono text-xs font-bold px-2 py-0.5 rounded bg-white/[0.05] border border-white/5">{agent.violations_count}</span></TableCell>
-                    <TableCell><span className="text-white font-mono text-xs font-bold px-2 py-0.5 rounded bg-white/[0.1] border border-white/10">{agent.approvals_count}</span></TableCell>
+                    <TableCell className="font-mono text-xs text-white/40 group-hover:text-white/80 transition-colors">{agent.totalPrs} logs</TableCell>
+                    <TableCell><span className="text-white font-mono text-xs font-bold px-2 py-0.5 rounded bg-white/[0.05] border border-white/5">{agent.violationsCount}</span></TableCell>
+                    <TableCell><span className="text-white font-mono text-xs font-bold px-2 py-0.5 rounded bg-white/[0.1] border border-white/10">{agent.approvalsCount}</span></TableCell>
                   </motion.tr>
                 ))}
               </TableBody>
