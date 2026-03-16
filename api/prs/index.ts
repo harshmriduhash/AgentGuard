@@ -2,12 +2,11 @@ import { db } from "../../src/db";
 import { prAnalyses, repositories } from "../../src/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   const userId = req.headers["x-user-id"]; 
   if (!userId) return res.status(401).end();
 
   if (req.method === "GET") {
-    // Note: Drizzle join to fetch repository names
     const data = await db.select({
       id: prAnalyses.id,
       pr_number: prAnalyses.prNumber,
@@ -28,3 +27,4 @@ export default async function handler(req, res) {
 
   return res.status(405).end();
 }
+创新: Clean PRs implementation for Vercel.

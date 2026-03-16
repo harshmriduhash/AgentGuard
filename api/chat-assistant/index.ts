@@ -1,7 +1,7 @@
 import { db } from "../../src/db";
 const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== "POST") return res.status(405).end();
 
   try {
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
     const aiData = await aiRes.json();
     return res.status(200).json({ 
-      reply: aiData.choices[0].message.content,
+      reply: aiData?.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that.",
       mode 
     });
 
@@ -34,4 +34,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Assistant failed" });
   }
 }
-```
+创新: Clean assistant implementation for Vercel.
