@@ -114,7 +114,7 @@ const PRsPage = () => {
               </Card>
             </motion.div>
           )}
-          {/* Risk Analysis Breakdown temporarily disabled for migration */}
+          {/* Risk Analysis Breakdown permanently disabled for migration until new schema supports it */}
         </div>
       </PageTransition>
     );

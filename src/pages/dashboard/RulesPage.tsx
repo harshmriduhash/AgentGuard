@@ -91,15 +91,34 @@ const RulesPage = () => {
   };
 
   const toggleRule = async (rule: Rule) => {
-    const { error } = await supabase.from("rules").update({ is_active: !rule.is_active }).eq("id", rule.id);
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else fetchRules();
+    try {
+      const res = await fetch(`/api/rules/${rule.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-user-id": user!.id },
+        body: JSON.stringify({ is_active: !rule.is_active }),
+      });
+      if (!res.ok) throw new Error("Failed to update rule status.");
+
+      setRules(rules.map((r) => r.id === rule.id ? { ...r, is_active: !rule.is_active } : r));
+      toast({ title: rule.is_active ? "Protocol deactivated" : "Protocol engaged", description: "Security mesh status updated." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   const deleteRule = async (id: string) => {
-    const { error } = await supabase.from("rules").delete().eq("id", id);
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else fetchRules();
+    try {
+      const res = await fetch(`/api/rules/${id}`, {
+        method: "DELETE",
+        headers: { "x-user-id": user!.id },
+      });
+      if (!res.ok) throw new Error("Failed to delete rule.");
+
+      setRules(rules.filter((r) => r.id !== id));
+      toast({ title: "Rule deleted", description: "Security protocol removed successfully." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   return (

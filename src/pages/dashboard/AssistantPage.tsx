@@ -29,7 +29,7 @@ const AssistantPage = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-    if (!session) {
+    if (!user) {
       toast({ title: "Not signed in", description: "Please sign in again.", variant: "destructive" });
       return;
     }
