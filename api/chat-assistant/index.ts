@@ -34,4 +34,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Assistant failed" });
   }
 }
-创新: Simplified the assistant logic for the Vercel function transition.
+```

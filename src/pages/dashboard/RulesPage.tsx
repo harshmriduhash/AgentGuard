@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client"; // Removed for Vercel DB migration
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,33 +38,56 @@ const RulesPage = () => {
   const [form, setForm] = useState({ repository_id: "", rule_type: "file_path_restriction", pattern: "", description: "" });
   const [loading, setLoading] = useState(false);
 
-  const fetchRules = async () => {
+  useEffect(() => {
     if (!user) return;
-    setLoading(true);
-    const { data, error } = await supabase.from("rules").select("*, repositories(full_name)").eq("user_id", user.id).order("created_at", { ascending: false });
-    if (error) toast({ title: "Failed to load rules", description: error.message, variant: "destructive" });
-    if (data) setRules(data as unknown as Rule[]);
-    setLoading(false);
-  };
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [rulesRes, reposRes] = await Promise.all([
+          fetch("/api/rules", { headers: { "x-user-id": user.id } }),
+          fetch("/api/repositories", { headers: { "x-user-id": user.id } })
+        ]);
 
-  const fetchRepos = async () => {
-    if (!user) return;
-    const { data, error } = await supabase.from("repositories").select("id, full_name").eq("user_id", user.id);
-    if (error) toast({ title: "Failed to load repos", description: error.message, variant: "destructive" });
-    if (data) setRepos(data as Repository[]);
-  };
+        if (!rulesRes.ok || !reposRes.ok) throw new Error("Failed to fetch rules or repositories.");
 
-  useEffect(() => { fetchRules(); fetchRepos(); }, [user]);
+        const rulesData = await rulesRes.json();
+        const reposData = await reposRes.json();
+
+        setRules(rulesData);
+        setRepos(reposData);
+      } catch (err: any) {
+        toast({ title: "Load failed", description: err.message, variant: "destructive" });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [user, toast]);
 
   const handleCreate = async () => {
     if (!user || !form.repository_id || !form.pattern) return;
-    const { error } = await supabase.from("rules").insert({
-      user_id: user.id, repository_id: form.repository_id,
-      rule_type: form.rule_type as any, pattern: form.pattern,
-      description: form.description || null,
-    });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else { setDialogOpen(false); setForm({ repository_id: "", rule_type: "file_path_restriction", pattern: "", description: "" }); fetchRules(); }
+
+    try {
+      const res = await fetch("/api/rules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-user-id": user.id },
+        body: JSON.stringify({
+          user_id: user.id,
+          repository_id: form.repository_id,
+          rule_type: form.rule_type,
+          pattern: form.pattern,
+          description: form.description || null,
+        })
+      });
+      if (!res.ok) throw new Error("Failed to create rule.");
+      const createdRule = await res.json();
+      setRules((prevRules) => [...prevRules, createdRule]); // Optimistic update
+      setDialogOpen(false);
+      setForm({ repository_id: "", rule_type: "file_path_restriction", pattern: "", description: "" });
+      toast({ title: "Rule deployed", description: "Security protocol updated successfully." });
+    } catch (err: any) {
+      toast({ title: "Deployment failed", description: err.message, variant: "destructive" });
+    }
   };
 
   const toggleRule = async (rule: Rule) => {

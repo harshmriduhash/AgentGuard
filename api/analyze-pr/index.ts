@@ -4,7 +4,7 @@ import { eq, and, gte, sql } from "drizzle-orm";
 
 const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
